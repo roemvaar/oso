@@ -1,4 +1,4 @@
-#include "uart.h"
+#include "rpi_4.h"
 #include "util.h"
 #include <stdarg.h>
 
@@ -33,20 +33,20 @@ static void setup_gpio(uint32_t pin, uint32_t setting, uint32_t resistor)
     uint32_t reg = pin / 10;
     uint32_t shift = (pin % 10) * 3;
     uint32_t status = GPFSEL_REG(reg);   // read status
-    status &= ~(7u << shift);              // clear bits
-    status |=  (setting << shift);         // set bits
+    status &= ~(7u << shift);            // clear bits
+    status |=  (setting << shift);       // set bits
     GPFSEL_REG(reg) = status;
 
     reg = pin / 16;
     shift = (pin % 16) * 2;
-    status = GPIO_PUP_PDN_CNTRL_REG(reg); // read status
-    status &= ~(3u << shift);              // clear bits
-    status |=  (resistor << shift);        // set bits
-    GPIO_PUP_PDN_CNTRL_REG(reg) = status; // write back
+    status = GPIO_PUP_PDN_CNTRL_REG(reg);   // read status
+    status &= ~(3u << shift);               // clear bits
+    status |=  (resistor << shift);         // set bits
+    GPIO_PUP_PDN_CNTRL_REG(reg) = status;   // write back
 }
 
 
-/*********** UART CONTROL ************************ ************/
+/*********** UART CONTROL **************************************/
 
 static char* const UART0_BASE = (char*)(MMIO_BASE + 0x201000);
 static char* const UART3_BASE = (char*)(MMIO_BASE + 0x201600);
@@ -55,7 +55,7 @@ static char* const UART3_BASE = (char*)(MMIO_BASE + 0x201600);
 // currently:
 //   * there is no line 0
 //   * line 1 (console) is driven by RPi UART0
-//   * line 2 (train control) is driven by RPi UART3
+//   * line 2 (target) is driven by RPi UART3
 static char* const line_uarts[] = { NULL, UART0_BASE, UART3_BASE };
 
 // UART register offsets
@@ -204,4 +204,54 @@ void uart_printf( size_t line, char *fmt, ...)
     va_start(va,fmt);
     uart_format_print(line, fmt, va);
   	va_end(va);
+}
+
+
+/*********** SYSTEM TIMER **************************************/
+static char* const SYS_TIMER_BASE = (char*)(MMIO_BASE + 0x3000);
+
+// System Timer register offsets - BCM2711 ARM Peripherals p.143
+static const uint32_t SYS_TIMER_CS = 0x00;
+static const uint32_t SYS_TIMER_CLO = 0x04;
+static const uint32_t SYS_TIMER_CHI = 0x08;
+static const uint32_t SYS_TIMER_C0 = 0x0c;
+static const uint32_t SYS_TIMER_C1 = 0x10;
+static const uint32_t SYS_TIMER_C2 = 0x14;
+static const uint32_t SYS_TIMER_C3 = 0x18;
+
+const unsigned int interval = 200000;
+unsigned int current_value = 0;
+
+uint32_t sys_timer_get_count(void)
+{
+    uint32_t count = *(volatile uint32_t*)(SYS_TIMER_BASE + SYS_TIMER_CLO);
+
+    return count;
+}
+
+void sys_timer_init(void)
+{
+    // curVal = get32(TIMER_CLO);
+    current_value = *(volatile uint32_t*)(SYS_TIMER_BASE + SYS_TIMER_CLO);
+
+    // curVal += interval;
+    current_value += interval;
+
+    // put32(TIMER_C1, curVal);
+    *(volatile uint32_t*)(SYS_TIMER_BASE + SYS_TIMER_CLO) = current_value;
+}
+
+void handle_timer_irq(void)
+{
+    // curVal += interval;
+    current_value += interval;
+
+    // put32(TIMER_C1, curVal);
+    *(volatile uint32_t*)(SYS_TIMER_BASE + SYS_TIMER_C1) = current_value;
+
+    // put32(TIMER_CS, TIMER_CS_M1);
+    *(volatile uint32_t*)(SYS_TIMER_BASE + SYS_TIMER_CS) = 0x02;
+
+    // printf("Timer interrupt received\n\r");
+    uart_printf(1, "Timer interrupt received \r\n");
 }

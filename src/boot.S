@@ -25,9 +25,11 @@
 
 // Ensure the linker puts this at the start of the kernel image (kernel8.img)
 .section ".text.boot"
+
+// Execution starts here
 .global _start
 _start:
-    // Check processor ID is zero (executing on main core), else loop
+    // Check processor ID is zero (executing on main core), else hang
     // mrs x0, mpidr_el1
     // and x0, x0, #3
     // cbnz x0, exit
@@ -80,7 +82,9 @@ el1_entry:
     str w1, [x0]
 
 exit:
-    wfi
+    // issuing a `wfi` instruction indicates that no further execution
+    // is required until a WFI wake-up event occurs
+    wfi 
     b exit
 
 .section ".bss"
