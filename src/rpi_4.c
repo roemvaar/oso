@@ -219,7 +219,7 @@ static const uint32_t SYS_TIMER_C1 = 0x10;
 static const uint32_t SYS_TIMER_C2 = 0x14;
 static const uint32_t SYS_TIMER_C3 = 0x18;
 
-const unsigned int interval = 200000;
+const unsigned int interval = 1000000;
 unsigned int current_value = 0;
 
 uint32_t sys_timer_get_count(void)
@@ -229,6 +229,11 @@ uint32_t sys_timer_get_count(void)
     return count;
 }
 
+/* Steps from https://github.com/babbleberry/rpi4-osdev/blob/master/part13-interrupts/kernel/kernel.c#L68:
+    timer1_val = REGS_TIMER->counter_lo;
+    timer1_val += timer1_int;
+    REGS_TIMER->compare[1] = timer1_val;
+*/
 void sys_timer_init(void)
 {
     // curVal = get32(TIMER_CLO);
@@ -241,6 +246,11 @@ void sys_timer_init(void)
     *(volatile uint32_t*)(SYS_TIMER_BASE + SYS_TIMER_CLO) = current_value;
 }
 
+/* Steps:
+    timer1_val += timer1_int;
+    REGS_TIMER->compare[1] = timer1_val;
+    REGS_TIMER->control_status |= SYS_TIMER_IRQ_1;
+*/
 void handle_timer_irq(void)
 {
     // curVal += interval;
@@ -253,5 +263,5 @@ void handle_timer_irq(void)
     *(volatile uint32_t*)(SYS_TIMER_BASE + SYS_TIMER_CS) = 0x02;
 
     // printf("Timer interrupt received\n\r");
-    uart_printf(1, "Timer interrupt received \r\n");
+    uart_printf(1, "Timer interrupt received...\r\n");
 }

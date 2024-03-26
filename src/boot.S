@@ -87,6 +87,12 @@ exit:
     wfi 
     b exit
 
+.global move_to_kernel_space
+move_to_kernel_space:
+    ldr x0, =stackend
+    mov sp, x0
+    eret
+
 .section ".bss"
 .balign 16
 stack:
