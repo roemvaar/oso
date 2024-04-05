@@ -34,7 +34,7 @@ void sys_task_exit(void)
     // For most purposes this is enough to tell the program that this
     // entry can be overwritten
 
-    //schedule();
+    // schedule();
     uart_printf(CONSOLE, "Syscall: sys_task_exit\r\n");
     // exit_task(); call from scheduler
 }
@@ -53,4 +53,5 @@ void sys_clock_delay(int tid, int ticks)
 
 
 
-// void *const sys_call_table[] = {sys_task_create, sys_task_tid, sys_task_parent_tid, sys_task_exit, sys_clock_time, sys_clock_delay};
+// void *const sys_call_table[] = {sys_task_create, sys_task_tid, sys_task_parent_tid,
+// sys_task_exit, sys_clock_time, sys_clock_delay};

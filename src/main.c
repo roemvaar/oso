@@ -13,28 +13,17 @@ void user_task(void)
             uart_printf(CONSOLE, "first_task (user): %d\r\n", i);
         }
     }
-
-    // char input;
-    // uint32_t count;
-
-    // while (1) {
-    //     input = uart_getc(CONSOLE);
-        
-    //     if (input == '$') {
-    //         count = sys_timer_get_count();
-    //         uart_printf(CONSOLE, "Timer count: %u\r\n", count);
-    //     } else if (input == '\n' || input == '\r') {
-    //         uart_printf(CONSOLE, "\r\n");
-    //     } else {
-    //         uart_putc(CONSOLE, input);
-    //     }
-    // }
 }
 
+/* start_kernel
+ *
+ * The kernel needs to initialize important features, such as the
+ * exception vector, kernel data structures, set up and run the
+ * init_task
+ */
 void start_kernel(void)
 {
-    /* Configure GPIO and UART for console output.
-     */
+    /* Configure GPIO and UART for console output. */
     uart_init();
 
     /* Initialize exception vector for handling exceptions
@@ -48,9 +37,8 @@ void start_kernel(void)
     sys_timer_init();
     // timer_init();
 
-    /* Initialize interrupt controller
-    */
-    //interrupt_controller_enable();
+    /* Initialize interrupt controller */
+    // interrupt_controller_enable();
     irq_enable();
 
     /* Set up the scheduler prior starting any interrupts
@@ -58,8 +46,7 @@ void start_kernel(void)
      */
     sched_init();
 
-    /* Run first user space application
-    */
+    /* Run first user space application */
     // int first_task = task_create(1, &user_task);
 }
 
@@ -69,18 +56,18 @@ int kmain(void)
 
     uart_printf(CONSOLE, "RTOS by roemvaar (Feb, 2024).\r\n");
 
-    int first_task = task_create(0, &user_task);
-    if (first_task < 0) {
-        uart_printf(CONSOLE, "Error creating first task: %d\r\n", first_task);
-        return first_task;
-    }
+    // int first_task = task_create(0, &user_task);
+    // if (first_task < 0) {
+    //     uart_printf(CONSOLE, "Error creating first task: %d\r\n", first_task);
+    //     return first_task;
+    // }
 
     char input;
     uint32_t count;
 
     while (1) {
         input = uart_getc(CONSOLE);
-        
+
         if (input == '$') {
             count = sys_timer_get_count();
             uart_printf(CONSOLE, "Timer count: %u\r\n", count);
@@ -90,6 +77,10 @@ int kmain(void)
             uart_putc(CONSOLE, input);
         }
     }
+
+    // while (1) {
+    //     schedule();
+    // }
 
     return 0;
 }
