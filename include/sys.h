@@ -33,7 +33,37 @@ void sys_task_exit(void);
 void sys_clock_time(int tid);
 void sys_clock_delay(int tid, int ticks);
 
-
 #endif
 
 #endif /* SYS_H_ */
+
+// #ifndef SYSCALL_H_
+// #define SYSCALL_H_
+
+
+// // // Kernel syscalls
+// // extern void exception_vector_init(void);
+// // // extern void syscall_handler(void);
+
+// // // Task creation syscalls
+// // int sys_create(unsigned int priority, void (*function)());
+// // int sys_tid();
+// // int sys_parent_tid();
+// // void sys_yield();
+// // void sys_exit();
+
+// // // Message passing syscalls
+// // int sys_send(int tid, const char *msg, int msglen, char *reply, int rplen);
+// // int sys_receive(int *tid, char *msg, int msglen);
+// // int sys_reply(int tid, const char *reply, int rplen);
+
+// // // Interrupts processing syscalls
+// // int await_event(int event_tid);
+
+// // // arch (registers)
+// // extern int get_el(void);
+
+// extern void initialize_exception_vector(void);
+// extern void syscall_handler(void);
+
+// #endif  // SYSCALL_H_

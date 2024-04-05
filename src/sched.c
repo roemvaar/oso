@@ -41,6 +41,8 @@ void schedule(void)
      * changes the active task. On a single processor only one task can be active at a time.
      */
 
+
+
     // switch_to(next);
 
     return;
@@ -63,6 +65,17 @@ TaskDescriptor_t *get_free_task_descriptor(void)
     return task_descriptors_array[num_tasks];
 }
 
+// int find_first_empty(struct task_descriptor td[])
+// {
+//     for (int i = 0; i < MAX_TASKS_PER_PRIORITY; ++i) {
+//         if (td[i].entry == NULL) {
+//             return i;
+//         }
+// }
+
+//     return -1;
+// }
+
 // void switch_to(TaskDescriptor_t *next)
 // {
 //     // Switch to schedule
@@ -84,6 +97,47 @@ void add_task_to_ready_queue(TaskDescriptor_t *task)
     uart_printf(1, "Task with tid: <%d> and priority: %d was added to the READY queue\r\n", task->tid, task->priority);
 }
 
+// // Have to pass by value to get it added to scheduler
+// //  RETURNS: The task's address
+// TaskDescriptor *add_task(task_descriptor td, unsigned int priority)
+// {
+//     // // TODO... Clean it up
+//     // //assert(priority < PRIORITY_LEVELS);
+//     // TaskDescriptor *chosen_list;
+
+//     // switch (priority) {
+//     //     case 0:
+//     //         chosen_list = p0;
+//     //         break;
+//     //     case 1:
+//     //         chosen_list = p1;
+//     //         break;
+//     //     case 2:
+//     //         chosen_list = p2;
+//     //         break;
+//     //     case 3:
+//     //         chosen_list = p3;
+//     //         break;
+//     //     default:
+//     //         return -2; // Priority not supported
+//     // }
+
+//     // if (chosen_list == NULL) {
+//     //     return -1; // Desired priority queue is full
+//     // }
+
+//     // size_t index = find_first_empty(chosen_list);
+//     // chosen_list[index] = td; // Add it
+
+//     // return &(chosen_list[index]); // Return nothing for now
+
+//     task_descriptor *task;
+
+//     task_descriptors[index] = task
+
+//     return task;
+// }
+
 // void add_to_ready_queue(TaskDescriptor_t *new_td)
 // {
 //     uart_puts(1, "TODO: Add newly created task to its respective priority ready!\r\n");
@@ -92,6 +146,50 @@ void add_task_to_ready_queue(TaskDescriptor_t *task)
 // int get_tid(void)
 // {
 //     return next_tid++;
+// }
+
+// Get the index of the next runnable task
+// int find_next_task(struct task_descriptor td[], size_t index)
+// {
+//     for (size_t i = index ; i != index; i = (i+1) % MAX_TASKS_PER_PRIORITY) {
+//         if (td[i].entry != NULL) {
+//             return i;
+//         }
+//     }
+
+//     return -1;
+// }
+
+
+// void switch_to_new_task(void)
+// {
+//     // task_descriptor queues[PRIORITY_LEVELS][16];
+
+//     // for (size_t i = 0; i < PRIORITY_LEVELS; ++i) {
+//     //     size_t index = find_next_task(queues[i], curr_task_index);
+    
+//     //     if (index != -1) {
+//     //         curr_task_index = i;
+//     //         curr_task = &(queues[i][index]);
+//     //     }
+//     // }
+// }
+
+
+// int get_tid()
+// {
+//     curr_task_index += 1;
+
+//     if (curr_task_index < MAX_TASK_INDEX) {
+//         return -2;
+//     }
+
+//     return 0;
+// }
+
+// void context_switch()
+// {
+//     // TODO: Build a context switch here
 // }
 
 TaskDescriptor_t *get_current_task(void)

@@ -18,14 +18,16 @@
  */
 int task_create(int priority, entry_point function)
 {
-    // // Get task id from scheduler
-    // int tid = get_tid();
 
-    if (priority != 0) {
+    // Check that the priority is valid
+    if (priority < 0 || priority >= PRIORITY_LEVELS) {
         return -1;
     } else if (get_num_tasks() >= MAX_NUM_TASKS) {
         return -2;
     }
+
+    // Get task id from scheduler
+    // int tid = get_tid();
 
     TaskDescriptor_t *new_task;
     TaskDescriptor_t *current_task = get_current_task();
@@ -44,6 +46,27 @@ int task_create(int priority, entry_point function)
 
     return new_task->tid;
 }
+
+// int sys_create(int priority, entry_point ep)
+// {
+//     uart_printf(1, "Creating");
+//     struct task_descriptor tid;
+
+//     tid.tid = get_tid();
+//     tid.parentid = curr_task->tid; // Need to get the caller's id (current task)
+
+//     tid.priority = priority;
+//     tid.state = READY;
+//     // tid.stack_pointer = &(contexts[curr_task_index]); 
+//     tid.entry = ep;
+
+//     curr_task_index++;
+
+//     // // Adds self to scheduler
+//     // add_task(tid, priority);
+
+//     return tid.tid;
+// }
 
 /* task_tid
  * 
@@ -99,6 +122,8 @@ int task_parent_tid(void)
  */
 void task_yield(void)
 {
+    /* this is simply a svc N system call */
+
     return;
 }
 
@@ -111,6 +136,10 @@ void task_yield(void)
 void task_exit(void)
 {
     /* The task will never again run. It may still retain some resources if resource re-use is not fully implemented. */
+    // For most purposes this is enough to tell the program that this
+    // entry can be overwritten
+    // curr_task->entry = NULL; 
+    // switch_to_new_task();
 
     return;
 }

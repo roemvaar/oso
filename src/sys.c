@@ -51,7 +51,5 @@ void sys_clock_delay(int tid, int ticks)
     uart_printf(CONSOLE, "Syscall: sys_clock_delay with tid: %d and ticks %d\r\n", tid, ticks);
 }
 
-
-
 // void *const sys_call_table[] = {sys_task_create, sys_task_tid, sys_task_parent_tid,
 // sys_task_exit, sys_clock_time, sys_clock_delay};
