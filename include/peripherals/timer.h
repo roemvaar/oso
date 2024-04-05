@@ -1,0 +1,4 @@
+#ifndef PERIPHERALS_TIMER_H_
+#define PERIPHERALS_TIMER_H_
+
+#endif  /* PERIPHERALS_TIMER_H_ */

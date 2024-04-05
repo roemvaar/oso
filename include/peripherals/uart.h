@@ -1,0 +1,4 @@
+#ifndef PERIPHERALS_UART_H_
+#define PERIPHERALS_UART_H_
+
+#endif  /* PERIPHERALS_UART_H_ */

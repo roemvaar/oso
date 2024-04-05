@@ -1,0 +1,4 @@
+#ifndef PERIPHERALS_IRQ_H_
+#define PERIPHERALS_IRQ_H_
+
+#endif  /* PERIPHERALS_IRQ_H_ */

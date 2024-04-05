@@ -1,8 +1,8 @@
 #ifndef RPI_4_H_
 #define RPI_4_H_
 
-#include <stdint.h>
-#include <stddef.h>
+#include <stdint.h>     // TODO(roemvaar): DELETE THIS - don't use stdlib
+#include <stddef.h>     // TODO(roemvaar): DELETE THIS - don't use stdlib
 
 /* UART */
 #define CONSOLE 1

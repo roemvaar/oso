@@ -54,5 +54,5 @@ dkms.conf
 
 # Custom
 build/*
-TODO
+TODO*
 .vscode/*

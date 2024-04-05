@@ -1,7 +1,9 @@
 #ifndef UTIL_H_
 #define UTIL_H_
 
-#include <stddef.h>
+#include <stddef.h>     // TODO(roemvaar): DELETE THIS - don't use stdlib
+
+// #define NULL ((void*)0)
 
 // conversions
 int a2d(char ch);
@@ -13,4 +15,4 @@ void i2a(int num, char *bf);
 void *memset(void *s, int c, size_t n);
 void* memcpy(void* restrict dest, const void* restrict src, size_t n);
 
-#endif // UTIL_H_
+#endif  /* UTIL_H_ */

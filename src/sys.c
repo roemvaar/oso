@@ -2,6 +2,14 @@
 
 #include "rpi_4.h"
 
+// enum SYSCALL_VALUES {
+//     CREATE = 4,
+//     TID = 5,
+//     PARENT_TID = 6,
+//     YIELD = 7,
+//     EXIT = 8
+// };
+
 /* Task System Calls 
  */
 void sys_task_create(int priority, void(*function)())
@@ -23,6 +31,10 @@ void sys_task_parent_tid(void)
 
 void sys_task_exit(void)
 {
+    // For most purposes this is enough to tell the program that this
+    // entry can be overwritten
+
+    //schedule();
     uart_printf(CONSOLE, "Syscall: sys_task_exit\r\n");
     // exit_task(); call from scheduler
 }
@@ -38,5 +50,7 @@ void sys_clock_delay(int tid, int ticks)
 {
     uart_printf(CONSOLE, "Syscall: sys_clock_delay with tid: %d and ticks %d\r\n", tid, ticks);
 }
+
+
 
 // void *const sys_call_table[] = {sys_task_create, sys_task_tid, sys_task_parent_tid, sys_task_exit, sys_clock_time, sys_clock_delay};

@@ -1,4 +1,4 @@
-# RTOS for Raspberry Pi 4 Model B
+# Operating System for Raspberry Pi 4 Model B
 
 University of Waterloo CS652 - Real-Time Programming 
 Project (Kernel) with some personal additions
@@ -28,6 +28,8 @@ in the next section).
 
 ## Development
 
+We follow the [Google style guidelines](https://google.github.io/styleguide/cppguide.html).
+
 To build and test the kernel follow this instructions:
 
 1. Build code
@@ -55,3 +57,5 @@ $ sudo picocom -b 115200 /dev/ttyUSB0
 * [raspberry-pi-os by Sergey Matyukevich](https://s-matyukevich.github.io/raspberry-pi-os/docs/lesson01/rpi-os.html)
 
 * [rpi4-osdev by Adam Greenwood-Byrne](https://www.rpi4os.com/)
+
+* [CS 452/652 - Real-time Programming by University of Waterloo](https://student.cs.uwaterloo.ca/~cs452/F23/)

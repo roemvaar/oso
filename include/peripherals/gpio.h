@@ -1,0 +1,4 @@
+#ifndef PERIPHERALS_GPIO_H_
+#define PERIPHERALS_GPIO_H_
+
+#endif  /* PERIPHERALS_GPIO_H_ */
