@@ -1,6 +1,6 @@
 #include "sys.h"
 
-#include "rpi_4.h"
+#include "peripherals/uart.h"
 
 // enum SYSCALL_VALUES {
 //     CREATE = 4,

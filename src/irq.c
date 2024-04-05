@@ -1,5 +1,5 @@
 #include "irq.h"
-#include "rpi_4.h"
+#include "peripherals/timer.h"
 
 void handle_irq(void)
 {

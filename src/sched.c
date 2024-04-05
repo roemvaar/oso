@@ -1,36 +1,39 @@
 #include "sched.h"
 
 #include <stddef.h>     // TODO(roemvaar): DELETE THIS - don't use stdlib
-#include "rpi_4.h"  // TODO(roemvaar): Delete this - don't print from here
+
+#include "peripherals/uart.h"   // TODO(roemvaar): Delete this - don't print from here
 
 int num_tasks = 0;
 // int next_tid = 10;
 static TaskDescriptor_t *task_descriptors_array[MAX_NUM_TASKS];
-static TaskDescriptor_t *init_task;
+// static TaskDescriptor_t *init_task;
 static TaskDescriptor_t *current_task;
 // static TaskDescriptor_t *task_bank;
 
 void sched_init(void)
 {
     /* Initialize init_task */
-    TaskDescriptor_t *first_task;
+    // TaskDescriptor_t *first_task;
 
-    first_task = task_descriptors_array[0];
-    first_task->priority = 0;
-    first_task->state = ACTIVE;
-    first_task->tid = 0;
-    first_task->parent_td = 0;  // init task has no parent, 0 is a placeholder to signal that
-    task_descriptors_array[0] = first_task;
+    // first_task = task_descriptors_array[0];
+    // first_task->priority = 0;
+    // first_task->state = ACTIVE;
+    // first_task->tid = 0;
+    // first_task->parent_td = 0;  // init task has no parent, 0 is a placeholder to signal that
+    // task_descriptors_array[0] = first_task;
 
-    num_tasks++;
+    // num_tasks++;
 
-    current_task = first_task;
-    init_task = first_task;
+    // current_task = first_task;
+    // init_task = first_task;
 
-    /* Initialize task descriptors array */
-    for (int i = 0; i < MAX_NUM_TASKS; i++) {
-        task_descriptors_array[i] = NULL;
-    }
+    // /* Initialize task descriptors array */
+    // for (int i = 0; i < MAX_NUM_TASKS; i++) {
+    //     task_descriptors_array[i] = NULL;
+    // }
+
+    return;
 }
 
 void schedule(void)
@@ -40,8 +43,6 @@ void schedule(void)
     /* The task that has just run, is running, or is about to run. Scheduling, which happens near the end of kernel processing,
      * changes the active task. On a single processor only one task can be active at a time.
      */
-
-
 
     // switch_to(next);
 

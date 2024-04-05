@@ -1,8 +1,8 @@
-#include "rpi_4.h"
-
 #include <stdarg.h>
 
 #include "util.h"
+
+#include "peripherals/uart.h"
 
 static char* const MMIO_BASE = (char*) 0xFE000000;
 
@@ -133,7 +133,7 @@ unsigned char uart_getc(size_t line)
     unsigned char ch;
 
     /* wait for data if necessary */
-    while (UART_REG(line, UART_FR) & UART_FR_RXFE) continue;
+    while (UART_REG(line, UART_FR) & UART_FR_RXFE);
     ch = UART_REG(line, UART_DR);
 
     return(ch);
@@ -142,7 +142,7 @@ unsigned char uart_getc(size_t line)
 void uart_putc(size_t line, unsigned char c)
 {
     /* make sure there is room to write more data */
-    while (UART_REG(line, UART_FR) & UART_FR_TXFF) continue;
+    while (UART_REG(line, UART_FR) & UART_FR_TXFF);
     UART_REG(line, UART_DR) = c;
 }
 
@@ -207,63 +207,4 @@ void uart_printf(size_t line, char *fmt, ...)
     va_start(va, fmt);
     uart_format_print(line, fmt, va);
     va_end(va);
-}
-
-/*********** SYSTEM TIMER **************************************/
-static char* const SYS_TIMER_BASE = (char*)(MMIO_BASE + 0x3000);
-
-// System Timer register offsets - BCM2711 ARM Peripherals p.143
-static const uint32_t SYS_TIMER_CS = 0x00;
-static const uint32_t SYS_TIMER_CLO = 0x04;
-static const uint32_t SYS_TIMER_CHI = 0x08;
-static const uint32_t SYS_TIMER_C0 = 0x0c;
-static const uint32_t SYS_TIMER_C1 = 0x10;
-static const uint32_t SYS_TIMER_C2 = 0x14;
-static const uint32_t SYS_TIMER_C3 = 0x18;
-
-const unsigned int interval = 1000000;
-unsigned int current_value = 0;
-
-uint32_t sys_timer_get_count(void)
-{
-    uint32_t count = *(volatile uint32_t*)(SYS_TIMER_BASE + SYS_TIMER_CLO);
-
-    return count;
-}
-
-/* Steps from https://github.com/babbleberry/rpi4-osdev/blob/master/part13-interrupts/kernel/kernel.c#L68:
-    timer1_val = REGS_TIMER->counter_lo;
-    timer1_val += timer1_int;
-    REGS_TIMER->compare[1] = timer1_val;
-*/
-void sys_timer_init(void)
-{
-    // curVal = get32(TIMER_CLO);
-    current_value = *(volatile uint32_t*)(SYS_TIMER_BASE + SYS_TIMER_CLO);
-
-    // curVal += interval;
-    current_value += interval;
-
-    // put32(TIMER_C1, curVal);
-    *(volatile uint32_t*)(SYS_TIMER_BASE + SYS_TIMER_CLO) = current_value;
-}
-
-/* Steps:
-    timer1_val += timer1_int;
-    REGS_TIMER->compare[1] = timer1_val;
-    REGS_TIMER->control_status |= SYS_TIMER_IRQ_1;
-*/
-void handle_timer_irq(void)
-{
-    // curVal += interval;
-    current_value += interval;
-
-    // put32(TIMER_C1, curVal);
-    *(volatile uint32_t*)(SYS_TIMER_BASE + SYS_TIMER_C1) = current_value;
-
-    // put32(TIMER_CS, TIMER_CS_M1);
-    *(volatile uint32_t*)(SYS_TIMER_BASE + SYS_TIMER_CS) = 0x02;
-
-    // printf("Timer interrupt received\n\r");
-    uart_printf(1, "Timer interrupt received...\r\n");
 }
