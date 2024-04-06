@@ -1,9 +1,8 @@
 #include "armv8.h"
-#include "irq.h"
+#include "peripherals/irq.h"
 #include "peripherals/timer.h"
 #include "peripherals/uart.h"
 #include "sched.h"
-#include "sys.h"
 #include "task.h"
 
 void user_task(void)
@@ -30,7 +29,7 @@ void start_kernel(void)
     /* Initialize exception vector for handling exceptions
      * such as sytem calls and IRQs.
      */
-    vector_table_el1_init();
+    exception_vectors_init();
     uart_printf(CONSOLE, "init: Exception vector for EL1 init completed...\r\n");
 
     /* Initialize system timer that will help to know when to
@@ -40,7 +39,8 @@ void start_kernel(void)
     uart_printf(CONSOLE, "init: System timer init completed...\r\n");
 
     /* Initialize interrupt controller */
-    // interrupt_controller_enable();
+    enable_interrupt_controller();
+    irq_barrier();
     irq_enable();
     uart_printf(CONSOLE, "init: IRQ enable init completed...\r\n");
 

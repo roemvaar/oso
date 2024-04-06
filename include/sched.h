@@ -8,6 +8,7 @@
  * A fixed array of task descriptors, size of max_num_tasks.
  * A fized array of process stacks. Each process will have an array.
  * Use round robin algorithm (FIFO).
+ * Time slicing.
  */
 
 #define MAX_NUM_TASKS 100
