@@ -20,13 +20,13 @@
 
 // static char* const SYS_TIMER_BASE = (char*)(PERIPHERALS_BASE + 0x3000);
 
-#define TIMER_CS        (PERIPHERALS_BASE+0x00003000)
-#define TIMER_CLO       (PERIPHERALS_BASE+0x00003004)
-#define TIMER_CHI       (PERIPHERALS_BASE+0x00003008)
-#define TIMER_C0        (PERIPHERALS_BASE+0x0000300C)
-#define TIMER_C1        (PERIPHERALS_BASE+0x00003010)
-#define TIMER_C2        (PERIPHERALS_BASE+0x00003014)
-#define TIMER_C3        (PERIPHERALS_BASE+0x00003018)
+#define TIMER_CS        (PERIPHERALS_BASE + 0x00003000)
+#define TIMER_CLO       (PERIPHERALS_BASE + 0x00003004)
+#define TIMER_CHI       (PERIPHERALS_BASE + 0x00003008)
+#define TIMER_C0        (PERIPHERALS_BASE + 0x0000300C)
+#define TIMER_C1        (PERIPHERALS_BASE + 0x00003010)
+#define TIMER_C2        (PERIPHERALS_BASE + 0x00003014)
+#define TIMER_C3        (PERIPHERALS_BASE + 0x00003018)
 
 #define TIMER_CS_M0	(1 << 0)
 #define TIMER_CS_M1	(1 << 1)
@@ -47,5 +47,6 @@ struct timer_regs
 uint32_t sys_timer_get_count(void);
 void sys_timer_init(void);
 void handle_timer_1_irq(void);
+void handle_timer_3_irq(void);
 
 #endif  /* PERIPHERALS_TIMER_H_ */

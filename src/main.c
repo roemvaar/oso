@@ -4,15 +4,7 @@
 #include "peripherals/uart.h"
 #include "sched.h"
 #include "task.h"
-
-void user_task(void)
-{
-    while (1) {
-        for (int i = 0; i < 50; i++) {
-            uart_printf(CONSOLE, "first_task (user): %d\r\n", i);
-        }
-    }
-}
+#include "user/demo1.h"
 
 /* start_kernel
  *
@@ -66,8 +58,21 @@ int kmain(void)
     //     return first_task;
     // }
 
+    // int second_task = task_create(0, &user_art);
+    // if (first_task < 0) {
+    //     uart_printf(CONSOLE, "Error creating first task: %d\r\n", first_task);
+    //     return first_task;
+    // }
+
     char input;
     uint32_t count;
+
+    uart_printf(CONSOLE, "   _____                 . . . . . o o o o o\r\n");
+    uart_printf(CONSOLE, "  __|[_]|__ ___________ _______    ____      o\r\n");
+    uart_printf(CONSOLE, " |[] [] []| [] [] [] [] [_____(__  ][]]_n_n__][.\r\n");
+    uart_printf(CONSOLE, "_|________|_[_________]_[________]_|__|________)<\r\n");
+    uart_printf(CONSOLE, "  oo    oo 'oo      oo ' oo    oo 'oo 0000---oo\\_\r\n");
+    uart_printf(CONSOLE, " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n");
 
     while (1) {
         input = uart_getc(CONSOLE);
@@ -80,6 +85,14 @@ int kmain(void)
         } else {
             uart_putc(CONSOLE, input);
         }
+        
+        display_ascii_art();
+
+        for (int i = 0; i < 10; i++) {
+            uart_printf(CONSOLE, "Delay [%d]...\r\n", i);
+            delay(1000000);
+        }
+
     }
 
     // while (1) {

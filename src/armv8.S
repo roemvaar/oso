@@ -18,8 +18,8 @@
 #define FIQ_INVALID_EL0_32		14
 #define ERROR_INVALID_EL0_32	15
 
-// Stack frame size
-#define S_FRAME_SIZE            256    // Size of all saved registers
+/* Stack frame size - size of all stored registers */
+#define S_FRAME_SIZE            256
 
 /* Kernel entry */
 .macro kernel_entry
@@ -42,8 +42,7 @@
     str x30, [sp, #16 * 15]
 .endm
 
-// Kernel exit
-// .macro kernel_exit, el
+/* Kernel exit */
 .macro kernel_exit
     ldp x0, x1, [sp, #16 * 0]
     ldp x2, x3, [sp, #16 * 1]
@@ -65,7 +64,7 @@
     eret
 .endm
 
-// .macro handle_invalid_entry el, type
+/* Handle invalid entry */
 .macro handle_invalid_entry type
     kernel_entry
     mov x0, #\type
@@ -75,6 +74,7 @@
     b err_hang
 .endm
 
+/* `ventry` is used to create entries in the vector table */
 .macro ventry label
 .balign 0x80
     b \label
@@ -154,7 +154,11 @@ fiq_invalid_el0_32:
 error_invalid_el0_32:
     handle_invalid_entry ERROR_INVALID_EL0_32
 
-/* IRQ handler */
+/* IRQ handler
+ *
+ * Note: Whenever an exception handler is executed, the processor
+ * automatically disables all types of interrupts (masking).
+ */
 .align 8
 handle_el1_irq:
     kernel_entry
@@ -196,7 +200,11 @@ exception_vectors_init:
     isb sy
     ret
 
-/* Enable IRQ */
+/* Enable IRQ 
+ *
+ * We use the value of 2 because we only want to set (in irq_enable) and 
+ * clear (in irq_disable) second bit that corresponds to the I Mask (IRQs). 
+ */
 .align 8
 .global irq_enable
 irq_enable:

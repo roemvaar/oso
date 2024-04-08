@@ -6,11 +6,11 @@
 
 void enable_interrupt(unsigned int irq)
 {
-	uart_printf(CONSOLE, "%x\r\n", irq);
+	uart_printf(CONSOLE, "irq: %x\r\n", irq);
 	unsigned int n = irq / 32;
 	unsigned int offset = irq % 32;
 	unsigned int enableRegister = GICD_ENABLE_IRQ_BASE + (4*n);
-	uart_printf(CONSOLE, "EnableRegister: %x\r\n", enableRegister);
+	uart_printf(CONSOLE, "irq: EnableRegister: %x\r\n", enableRegister);
 	put32(enableRegister, 1 << offset);
 }
 
@@ -32,12 +32,17 @@ void enable_interrupt_controller()
 void handle_irq(void)
 {
     unsigned int irq_ack_reg = get32(GICC_IAR);
-	 unsigned int irq = irq_ack_reg & 0x2FF;
+	unsigned int irq = irq_ack_reg & 0x2FF;
 
     switch (irq) {
         case (SYSTEM_TIMER_IRQ_1):
+            put32(GICC_EOIR, irq_ack_reg);
             handle_timer_1_irq();
             break;
+        // case (SYSTEM_TIMER_IRQ_3):
+        //     put32(GICC_EOIR, irq_ack_reg);
+        //     handle_timer_3_irq();
+        //     break;
         default:
             uart_printf(CONSOLE, "irq: Unknown pending irq: %x\r\n", irq);
     }
