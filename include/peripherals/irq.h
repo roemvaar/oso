@@ -27,7 +27,7 @@
 void enable_interrupt_controller(void);
 void handle_irq(void);
 
-/* In irq.S assembly file */ 
+/* In irq.S assembly file */
 extern void exception_vectors_init(void);
 extern void irq_enable(void);
 extern void irq_disable(void);

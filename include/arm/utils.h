@@ -1,7 +1,7 @@
 #ifndef ARM_UTILS_H_
 #define ARM_UTILS_H_
 
-/* In assembly file */
+/* In utils.S assembly file */
 extern void delay(unsigned long);
 extern unsigned int get32(unsigned long);
 extern int get_el(void);

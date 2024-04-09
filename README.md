@@ -32,7 +32,8 @@ timing, threading and concurrency.
 
 The documentation for the project is stored within the ``doc/`` subdirectory. 
 
-The official kernel API for the course is stored ([here](https://student.cs.uwaterloo.ca/~cs452/F23/assignments/kernel.html)).\
+The official kernel API for the course is stored ([here](https://student.cs.uwaterloo.ca/~cs452/F23/assignments/kernel.html)).
+
 The assignment-related files are stored on the course site ([here](https://student.cs.uwaterloo.ca/~cs452/F23/)).
 
 
@@ -55,18 +56,9 @@ in the next section).
 
 ## Build
 
-At the lab:
-
 ```
 $ cd path/to/kernel
-$ make
-```
-
-Local development:
-
-```
-$ cd path/to/kernel
-$ make XDEV=/path/to/cross_toolchain
+$ make X_DIR=/path/to/cross_toolchain
 ```
 
 Make sure to specify the path to the cross toolchain on your dev machine.

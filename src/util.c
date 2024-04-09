@@ -1,6 +1,6 @@
 #include "util.h"
 
-// ascii digit to integer
+/* ASCII character to integer */
 int a2d(char ch)
 {
     if (ch >= '0' && ch <= '9') {
@@ -18,7 +18,7 @@ int a2d(char ch)
     return -1;
 }
 
-// ascii to what (?)
+/* ASCII to what (?) - TODO(roemvaar) Implement this conversion */
 char a2i(char ch, char **src, int base, int *nump)
 {
     (void)ch;
@@ -29,7 +29,7 @@ char a2i(char ch, char **src, int base, int *nump)
     return 'a';
 }
 
-// unsigned int to ascii string
+/* Unsigned int to ascii string */
 void ui2a(unsigned int num, unsigned int base, char *bf)
 {
     int n = 0;
@@ -54,7 +54,7 @@ void ui2a(unsigned int num, unsigned int base, char *bf)
     *bf = 0;
 }
 
-// signed int to ascii string
+/* Signed int to ascii string */
 void i2a(int num, char *bf)
 {
     if (num < 0) {
@@ -65,7 +65,7 @@ void i2a(int num, char *bf)
     ui2a(num, 10, bf);
 }
 
-// // Just used for debugging certain 
+// /* Just used for debugging certain */
 // void print_debug()
 // {
 //     uart_printf(1, "DEBUG PRINT\r\n");

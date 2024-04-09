@@ -85,14 +85,13 @@ int kmain(void)
         } else {
             uart_putc(CONSOLE, input);
         }
-        
+
         display_ascii_art();
 
         for (int i = 0; i < 10; i++) {
             uart_printf(CONSOLE, "Delay [%d]...\r\n", i);
             delay(1000000);
         }
-
     }
 
     // while (1) {
