@@ -2,7 +2,7 @@
 
 #include "peripherals/irq.h"
 #include "peripherals/uart.h"   // TODO(roemvaar): Delete this - don't print from here
-#include "utils.h"
+#include "arm/utils.h"
 
 /* System Timer
  *

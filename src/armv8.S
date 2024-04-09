@@ -171,21 +171,6 @@ handle_el1_irq:
 err_hang:
     b err_hang
 
-/* Get current Exception level (CurrentEL) */
-.align 8
-.global get_el
-get_el:
-    mrs x0, CurrentEL
-    lsr x0, x0, #2
-    ret
-
-/* Get Stack Pointer Select (SPSel) */
-.align 8
-.global get_SPSel
-get_SPSel:
-    mrs x0, SPSel
-    ret
-
 /* Exception vector table EL1 initialization. We have to tell
  * the core, where is the exception vector located, using
  * the `VBAR_EL0` special purpose register.

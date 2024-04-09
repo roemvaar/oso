@@ -2,7 +2,7 @@
 
 #include "peripherals/timer.h"
 #include "peripherals/uart.h"
-#include "utils.h"
+#include "arm/utils.h"
 
 void enable_interrupt(unsigned int irq)
 {
