@@ -1,5 +1,6 @@
 # Cross-compiler
-X_DIR:=/home/roemvaar/waterloo/cs652/xdev	# TODO(roemvaar): make this a general path
+# TODO(roemvaar): make this a general path
+X_DIR:=/home/roemvaar/waterloo/cs652/xdev
 XBIN_DIR:=$(X_DIR)/bin
 TRIPLE=aarch64-none-elf
 CC=$(XBIN_DIR)/$(TRIPLE)-gcc
