@@ -4,36 +4,42 @@
 
 #include "peripherals/uart.h"   // TODO(roemvaar): Delete this - don't print from here
 
+TaskDescriptor_t *init_task;
+TaskDescriptor_t *current_task;
+
+static TaskDescriptor_t tasks[MAX_NUM_TASKS_PER_PRIORITY];
+TaskDescriptor_t *tasks_descriptors = tasks;
+int tasks_stacks[MAX_NUM_TASKS_PER_PRIORITY * PRIORITY_LEVELS];
 int num_tasks = 0;
+
 // int next_tid = 10;
-static TaskDescriptor_t *task_descriptors_array[MAX_NUM_TASKS];
+// static TaskDescriptor_t *tasks[MAX_NUM_TASKS_PER_PRIORITY];
 // static TaskDescriptor_t *init_task;
-static TaskDescriptor_t *current_task;
+// static TaskDescriptor_t *current_task;
 // static TaskDescriptor_t *task_bank;
 
 void sched_init(void)
 {
-    /* Initialize init_task */
-    // TaskDescriptor_t *first_task;
-
-    // first_task = task_descriptors_array[0];
-    // first_task->priority = 0;
-    // first_task->state = ACTIVE;
-    // first_task->tid = 0;
-    // first_task->parent_td = 0;  // init task has no parent, 0 is a placeholder to signal that
-    // task_descriptors_array[0] = first_task;
-
-    // num_tasks++;
-
-    // current_task = first_task;
-    // init_task = first_task;
-
-    // /* Initialize task descriptors array */
-    // for (int i = 0; i < MAX_NUM_TASKS; i++) {
-    //     task_descriptors_array[i] = NULL;
+    /* Initialize task descriptors array */
+    // for (int i = 0; i < MAX_NUM_TASKS_PER_PRIORITY; i++) {
+    //     tasks[i] = NULL;
     // }
 
-    return;
+    /* Initialize init_task */
+    TaskDescriptor_t *first_task = tasks_descriptors;
+
+    /* Get memory for init_task */
+
+    first_task->priority = 0;
+    first_task->state = ACTIVE;
+    first_task->tid = 0;
+    first_task->parent_td = 0;  // init task has no parent, 0 is a placeholder to signal that
+    init_task = first_task;
+    current_task = first_task;
+
+    /* Add init_task to ready queue */
+
+    num_tasks++;
 }
 
 void schedule(void)
@@ -63,7 +69,7 @@ TaskDescriptor_t *get_free_task_descriptor(void)
 {
     num_tasks++;
 
-    return task_descriptors_array[num_tasks];
+    return &tasks[num_tasks];
 }
 
 // int find_first_empty(struct task_descriptor td[])
@@ -134,7 +140,7 @@ void add_task_to_ready_queue(TaskDescriptor_t *task)
 
 //     task_descriptor *task;
 
-//     task_descriptors[index] = task
+//     tasks[index] = task
 
 //     return task;
 // }
@@ -142,11 +148,6 @@ void add_task_to_ready_queue(TaskDescriptor_t *task)
 // void add_to_ready_queue(TaskDescriptor_t *new_td)
 // {
 //     uart_puts(1, "TODO: Add newly created task to its respective priority ready!\r\n");
-// }
-
-// int get_tid(void)
-// {
-//     return next_tid++;
 // }
 
 // Get the index of the next runnable task
@@ -168,24 +169,11 @@ void add_task_to_ready_queue(TaskDescriptor_t *task)
 
 //     // for (size_t i = 0; i < PRIORITY_LEVELS; ++i) {
 //     //     size_t index = find_next_task(queues[i], curr_task_index);
-    
 //     //     if (index != -1) {
 //     //         curr_task_index = i;
 //     //         curr_task = &(queues[i][index]);
 //     //     }
 //     // }
-// }
-
-
-// int get_tid()
-// {
-//     curr_task_index += 1;
-
-//     if (curr_task_index < MAX_TASK_INDEX) {
-//         return -2;
-//     }
-
-//     return 0;
 // }
 
 // void context_switch()

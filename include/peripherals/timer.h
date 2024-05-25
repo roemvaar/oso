@@ -6,7 +6,7 @@
 
 #include "base.h"
 
-#define CLOCKHZ 1000000
+#define CLOCKHZ 1000000     // Free-running system timer, constant 1MHz rate
 
 #define TIMER_CS        (PERIPHERALS_BASE + 0x00003000)
 #define TIMER_CLO       (PERIPHERALS_BASE + 0x00003004)

@@ -16,18 +16,14 @@
  *      -1  - invalid priority
  *      -2  - kernel is out of task descriptors
  */
-int task_create(int priority, entry_point function)
+int task_create(int priority, EntryPoint_t code)
 {
-
-    // Check that the priority is valid
-    if (priority < 0 || priority >= PRIORITY_LEVELS) {
+    /* Check that the priority is valid */
+    if (priority < 0 || priority > PRIORITY_LEVELS) {
         return -1;
-    } else if (get_num_tasks() >= MAX_NUM_TASKS) {
+    } else if (get_num_tasks() >= MAX_NUM_TASKS_PER_PRIORITY) {
         return -2;
     }
-
-    // Get task id from scheduler
-    // int tid = get_tid();
 
     TaskDescriptor_t *new_task;
     TaskDescriptor_t *current_task = get_current_task();
@@ -39,34 +35,15 @@ int task_create(int priority, entry_point function)
     new_task->tid = num_tasks;
     // new_td->tid = tid;
     new_task->parent_td = current_task;
-    new_task->function = function;
+    new_task->code = code;
 
     /* Add new task into ready_queue */
     add_task_to_ready_queue(new_task);
 
+    num_tasks++;
+
     return new_task->tid;
 }
-
-// int sys_create(int priority, entry_point ep)
-// {
-//     uart_printf(1, "Creating");
-//     struct task_descriptor tid;
-
-//     tid.tid = get_tid();
-//     tid.parentid = curr_task->tid; // Need to get the caller's id (current task)
-
-//     tid.priority = priority;
-//     tid.state = READY;
-//     // tid.stack_pointer = &(contexts[curr_task_index]); 
-//     tid.entry = ep;
-
-//     curr_task_index++;
-
-//     // // Adds self to scheduler
-//     // add_task(tid, priority);
-
-//     return tid.tid;
-// }
 
 /* task_tid
  * 
@@ -138,7 +115,7 @@ void task_exit(void)
     /* The task will never again run. It may still retain some resources if resource re-use is not fully implemented. */
     // For most purposes this is enough to tell the program that this
     // entry can be overwritten
-    // curr_task->entry = NULL; 
+    // curr_task->entry = NULL;
     // switch_to_new_task();
 
     return;

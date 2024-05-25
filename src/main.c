@@ -41,38 +41,31 @@ void start_kernel(void)
      */
     sched_init();
     uart_printf(CONSOLE, "init: Scheduler init completed...\r\n");
-
-    /* Run first user space application */
-    // int first_task = task_create(1, &user_task);
 }
 
 int kmain(void)
 {
     start_kernel();
 
-    uart_printf(CONSOLE, "RTOS by roemvaar (Apr, 2024).\r\n");
+    uart_printf(CONSOLE, "RTOS by roemvaar (May, 2024).\r\n");
 
-    // int first_task = task_create(0, &user_task);
-    // if (first_task < 0) {
-    //     uart_printf(CONSOLE, "Error creating first task: %d\r\n", first_task);
-    //     return first_task;
-    // }
+    /* Run first user space application */
+    int ret = task_create(0, &user_task);
+    if (ret < 0) {
+        uart_printf(CONSOLE, "Error creating first task: %d\r\n", ret);
+        return ret;
+    }
 
-    // int second_task = task_create(0, &user_art);
-    // if (first_task < 0) {
-    //     uart_printf(CONSOLE, "Error creating first task: %d\r\n", first_task);
-    //     return first_task;
-    // }
+    ret = task_create(0, &display_ascii_art);
+    if (ret < 0) {
+        uart_printf(CONSOLE, "Error creating first task: %d\r\n", ret);
+        return ret;
+    }
+
+    uart_printf(CONSOLE, "Number of tasks: %d\r\n", num_tasks);
 
     char input;
     uint32_t count;
-
-    uart_printf(CONSOLE, "   _____                 . . . . . o o o o o\r\n");
-    uart_printf(CONSOLE, "  __|[_]|__ ___________ _______    ____      o\r\n");
-    uart_printf(CONSOLE, " |[] [] []| [] [] [] [] [_____(__  ][]]_n_n__][.\r\n");
-    uart_printf(CONSOLE, "_|________|_[_________]_[________]_|__|________)<\r\n");
-    uart_printf(CONSOLE, "  oo    oo 'oo      oo ' oo    oo 'oo 0000---oo\\_\r\n");
-    uart_printf(CONSOLE, " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n");
 
     while (1) {
         input = uart_getc(CONSOLE);
@@ -93,10 +86,6 @@ int kmain(void)
             delay(1000000);
         }
     }
-
-    // while (1) {
-    //     schedule();
-    // }
 
     return 0;
 }

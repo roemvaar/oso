@@ -2,13 +2,12 @@
 
 #include "util.h"
 
+#include "peripherals/base.h"
 #include "peripherals/uart.h"
-
-static char* const MMIO_BASE = (char*) 0xFE000000;
 
 /*********** GPIO CONFIGURATION ********************************/
 
-static char* const GPIO_BASE = (char*)(MMIO_BASE + 0x200000);
+static char* const GPIO_BASE = (char*)(PERIPHERALS_BASE + 0x200000);
 static const uint32_t GPFSEL_OFFSETS[6] = {0x00, 0x04, 0x08, 0x0c, 0x10, 0x14};
 static const uint32_t GPIO_PUP_PDN_CNTRL_OFFSETS[4] = {0xe4, 0xe8, 0xec, 0xf0};
 
@@ -50,8 +49,8 @@ static void setup_gpio(uint32_t pin, uint32_t setting, uint32_t resistor)
 
 /*********** UART CONTROL **************************************/
 
-static char* const UART0_BASE = (char*)(MMIO_BASE + 0x201000);
-static char* const UART3_BASE = (char*)(MMIO_BASE + 0x201600);
+static char* const UART0_BASE = (char*)(PERIPHERALS_BASE + 0x201000);
+static char* const UART3_BASE = (char*)(PERIPHERALS_BASE + 0x201600);
 
 // line_uarts[] maps the each serial line on the RPi hat to the UART that drives it
 // currently:
