@@ -1,10 +1,14 @@
-# Operating System for Raspberry Pi 4 Model B
+# OSo
 
+OSo ("bear" in Spanish) is a microkernel for embedded systems. It currently
+support Raspberry Pi 4 Model B.
+
+<!--
 This repository holds source code and documentation related to the CS 652
 (Real-time Programming) kernel with some modifications, as designed and developed
 by Roberto Valenzuela (roemvaar).
 
-<!--
+
 ## Description
 Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
 
