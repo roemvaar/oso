@@ -34,9 +34,7 @@ timing, threading and concurrency.
 
 ## Documentation
 
-The documentation for the project is stored within the ``doc/`` subdirectory. 
-
-The official kernel API for the course is stored ([here](https://student.cs.uwaterloo.ca/~cs452/F23/assignments/kernel.html)).
+The documentation for the project is in the [Wiki](https://github.com/roemvaar/oso/wiki) page. 
 
 The assignment-related files are stored on the course site ([here](https://student.cs.uwaterloo.ca/~cs452/F23/)).
 
