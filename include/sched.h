@@ -1,6 +1,8 @@
 #ifndef SCHED_H_
 #define SCHED_H_
 
+#include "mem.h"
+
 /* Scheduling - first iteration:
  *
  * After kernel startup `start_kernel` there is only one task running `init_task`
@@ -12,16 +14,18 @@
  * Time slicing.
  */
 
-#define PRIORITY_LEVELS 1
-#define MAX_NUM_TASKS_PER_PRIORITY 30
+#define PRIORITY_LEVELS 5
+#define MAX_TASKS_PER_PRIORITY 10
+#define MAX_TASKS (PRIORITY_LEVELS * MAX_TASKS_PER_PRIORITY)
 
 typedef struct _task_descriptor TaskDescriptor_t;
+typedef struct mem_block MemBlock_t;
 typedef void (*EntryPoint_t)(void);
 
-extern TaskDescriptor_t *init_task;
+// extern TaskDescriptor_t *init_task;
+// extern static TaskDescriptor_t *init_task;
 // extern TaskDescriptor_t *current_task;
-// extern TaskDescriptor_t *tasks[MAX_NUM_TASKS_PER_PRIORITY];
-// extern TaskDescriptor_t tasks[MAX_NUM_TASKS_PER_PRIORITY];
+// extern TaskDescriptor_t *tasks[MAX_TASKS_PER_PRIORITY];
 extern int num_tasks;
 
 /* TaskState_t
@@ -66,14 +70,12 @@ typedef struct _cpu_context
     unsigned long x26;
     unsigned long x27;
     unsigned long x28;
-    // unsigned long x29;
-    // unsigned long x30;
     // unsigned long elr_el1;
     // unsigned long spsr_el1;
     // unsigned long sp_el0;
-    unsigned long fp;
+    unsigned long fp;   /* fp is x29 */
     unsigned long sp;   /* The task's current stack pointer */
-    unsigned long pc;
+    unsigned long pc;   /* sp is x30 */ 
 } CPUContext_t;
 
 /* TaskDescriptor_t
@@ -87,7 +89,8 @@ typedef struct _task_descriptor
     // TaskDescriptor_t *next_task_ready_queue;  /* Pointer to TaskDescriptor of the next ready task (schedule) */
     // TaskDescriptor_t *next_task_send_queue;  /* Pointer to TaskDescriptor of the next ready task (send queue) */
     TaskState_t state;              /* The task's current run state */
-    EntryPoint_t code;           /* Pointer to the instruction memory for this task */
+    EntryPoint_t code;              /* Pointer to the instruction memory for this task */
+    MemBlock_t *mem;
 } TaskDescriptor_t;
 
 void sched_init(void);

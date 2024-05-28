@@ -4,42 +4,45 @@
 
 #include "peripherals/uart.h"   // TODO(roemvaar): Delete this - don't print from here
 
-TaskDescriptor_t *init_task;
-TaskDescriptor_t *current_task;
+// TODO: https://developerhelp.microchip.com/xwiki/bin/view/software-tools/c-programming/multi-file-projects/static-variables/
 
-static TaskDescriptor_t tasks[MAX_NUM_TASKS_PER_PRIORITY];
-TaskDescriptor_t *tasks_descriptors = tasks;
-int tasks_stacks[MAX_NUM_TASKS_PER_PRIORITY * PRIORITY_LEVELS];
-int num_tasks = 0;
+static TaskDescriptor_t *init_task;
+static TaskDescriptor_t *current_task;
+int num_tasks;
+static TaskDescriptor_t tasks[MAX_TASKS];
 
-// int next_tid = 10;
-// static TaskDescriptor_t *tasks[MAX_NUM_TASKS_PER_PRIORITY];
-// static TaskDescriptor_t *init_task;
-// static TaskDescriptor_t *current_task;
+// TaskDescriptor_t *tasks_descriptors = tasks;
+// int tasks_stacks[MAX_TASKS];
+// static TaskDescriptor_t *tasks[MAX_TASKS];
 // static TaskDescriptor_t *task_bank;
 
 void sched_init(void)
 {
-    /* Initialize task descriptors array */
-    // for (int i = 0; i < MAX_NUM_TASKS_PER_PRIORITY; i++) {
-    //     tasks[i] = NULL;
-    // }
+    num_tasks = 0;
 
-    /* Initialize init_task */
-    TaskDescriptor_t *first_task = tasks_descriptors;
+    /* Create first task `init_task` with tid 0 and add it to ready queue */
+    // // TaskDescriptor_t *first_task = tasks_descriptors;
+    // TaskDescriptor_t first_task = tasks[0];
 
-    /* Get memory for init_task */
-
-    first_task->priority = 0;
-    first_task->state = ACTIVE;
-    first_task->tid = 0;
-    first_task->parent_td = 0;  // init task has no parent, 0 is a placeholder to signal that
-    init_task = first_task;
-    current_task = first_task;
+    // /* Get memory for init_task */
+    // first_task.priority = 0;
+    // first_task.state = ACTIVE;
+    // first_task.tid = 0;
+    // first_task.parent_td = 0;  // init task has no parent, 0 is a placeholder to signal that
+    // init_task = &first_task;
+    // current_task = &first_task;
 
     /* Add init_task to ready queue */
 
-    num_tasks++;
+    /* Initialize task descriptors array */
+    for (int i = 0; i < MAX_TASKS; i++) {
+        tasks[i].tid = i;
+    }
+
+    /* Initialize task descriptors array */
+    for (int i = 0; i < MAX_TASKS; i++) {
+        uart_printf(CONSOLE, "task %d tid: <%d>\r\n", i, tasks[i].tid);
+    }
 }
 
 void schedule(void)
