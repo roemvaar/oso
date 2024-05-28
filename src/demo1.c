@@ -11,6 +11,16 @@ void user_task(void)
     }
 }
 
+void hello_name(char *array)
+{
+    while (1) {
+        for (int i = 0; i < 5; i++) {
+            uart_printf(CONSOLE, "%c", array[i]);
+            delay(1000000);
+        }
+    }
+}
+
 /* ASCII art 
  * https://www.asciiart.eu/vehicles/trains
  */

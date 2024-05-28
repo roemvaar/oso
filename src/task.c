@@ -19,9 +19,9 @@
 int task_create(int priority, EntryPoint_t code)
 {
     /* Check that the priority is valid */
-    if (priority < 0 || priority > PRIORITY_LEVELS) {
+    if (priority < 0 || priority >= PRIORITY_LEVELS) {
         return -1;
-    } else if (get_num_tasks() >= MAX_NUM_TASKS_PER_PRIORITY) {
+    } else if (get_num_tasks() >= MAX_TASKS) {
         return -2;
     }
 

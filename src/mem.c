@@ -1,5 +1,22 @@
 #include "mem.h"
 
+static MemBlock_t *stacks[BLOCK_COUNT];
+
+void mem_init(void)
+{
+    return;
+}
+
+MemBlock_t *get_mem(void)
+{
+    return NULL;
+}
+
+void free_mem(MemBlock_t *block)
+{
+    return;
+}
+
 /* Define our own memset to avoid SIMD instructions emitted from the compiler */
 void *memset(void *s, int c, size_t n)
 {

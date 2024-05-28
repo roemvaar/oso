@@ -33,7 +33,7 @@ void handle_timer_1_irq(void)
      * https://github.com/s-matyukevich/raspberry-pi-os/blob/master/docs/lesson03/rpi-os.md
      */
     put32(TIMER_CS, TIMER_CS_M1);
-    uart_printf(CONSOLE, "[irq] Timer 1 interrupt received.\r\n");
+    // uart_printf(CONSOLE, "[irq] Timer 1 interrupt received.\r\n");
 }
 
 void handle_timer_3_irq(void)
