@@ -51,21 +51,29 @@ int kmain(void)
     uart_printf(CONSOLE, "RTOS by roemvaar (May, 2024).\r\n");
 
     /* Run first user space application */
-    // int ret = task_create(0, &user_task);
-    // if (ret < 0) {
-    //     uart_printf(CONSOLE, "Error creating first task: %d\r\n", ret);
-    //     return ret;
-    // }
+    int ret = task_create(0, &user_task);
+    if (ret < 0) {
+        uart_printf(CONSOLE, "Error creating first task: %d\r\n", ret);
+        return ret;
+    }
 
-    // ret = task_create(0, &display_ascii_art);
-    // if (ret < 0) {
-    //     uart_printf(CONSOLE, "Error creating first task: %d\r\n", ret);
-    //     return ret;
-    // }
+    ret = task_create(3, &display_ascii_art);
+    if (ret < 0) {
+        uart_printf(CONSOLE, "Error creating second task: %d\r\n", ret);
+        return ret;
+    }
 
     uart_printf(CONSOLE, "Number of tasks: %d\r\n", (int)num_tasks);
     TaskDescriptor_t *current_task = get_current_task();
+    uart_printf(CONSOLE, "Current task tid: %d\r\n", (int)current_task->tid);
     uart_printf(CONSOLE, "Current task state: %d\r\n", (int)current_task->state);
+
+    for (int i = 0; i < num_tasks; i++) {
+        // Print state
+        continue;
+    }
+
+    uart_printf(CONSOLE, "Current task [%d]... stack[0]: %u\r\n", current_task->tid, current_task->mem[0]);
 
     char input;
     uint32_t count;

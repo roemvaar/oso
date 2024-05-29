@@ -1,11 +1,12 @@
 #include "user/demo1.h"
 
 #include "peripherals/uart.h"
+#include "arm/utils.h"
 
 void user_task(void)
 {
     while (1) {
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 5; i++) {
             uart_printf(CONSOLE, "first_task (user): %d\r\n", i);
         }
     }

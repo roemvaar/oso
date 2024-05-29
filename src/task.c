@@ -1,5 +1,6 @@
 #include "task.h"
 
+#include "mem.h"
 #include "sched.h"
 
 /* task_create
@@ -33,14 +34,12 @@ int task_create(int priority, EntryPoint_t code)
     new_task->priority = priority;
     new_task->state = ACTIVE;
     new_task->tid = num_tasks;
-    // new_td->tid = tid;
     new_task->parent_td = current_task;
     new_task->code = code;
+    new_task->mem = get_mem_by_tid(new_task->tid);
 
     /* Add new task into ready_queue */
     add_task_to_ready_queue(new_task);
-
-    num_tasks++;
 
     return new_task->tid;
 }

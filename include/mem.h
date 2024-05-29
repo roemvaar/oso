@@ -20,7 +20,7 @@ typedef struct mem_block
 } MemBlock_t;
 
 void mem_init(void);
-MemBlock_t *get_mem(void);
+MemBlock_t *get_mem_by_tid(int tid);
 void free_mem(MemBlock_t *block);
 
 void *memset(void *s, int c, size_t n);

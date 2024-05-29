@@ -3,6 +3,7 @@
 #include <stddef.h>     // TODO(roemvaar): DELETE THIS - don't use stdlib
 
 #include "peripherals/uart.h"   // TODO(roemvaar): Delete this - don't print from here
+#include "mem.h"
 
 // TODO: https://developerhelp.microchip.com/xwiki/bin/view/software-tools/c-programming/multi-file-projects/static-variables/
 
@@ -21,18 +22,18 @@ void sched_init(void)
     num_tasks = 0;
 
     /* Create first task `init_task` with tid 0 and add it to ready queue */
-    // // TaskDescriptor_t *first_task = tasks_descriptors;
-    // TaskDescriptor_t first_task = tasks[0];
+    TaskDescriptor_t first_task = tasks[0];
 
-    // /* Get memory for init_task */
-    // first_task.priority = 0;
-    // first_task.state = ACTIVE;
-    // first_task.tid = 0;
-    // first_task.parent_td = 0;  // init task has no parent, 0 is a placeholder to signal that
-    // init_task = &first_task;
-    // current_task = &first_task;
+    /* Get memory for init_task */
+    first_task.priority = 0;
+    first_task.state = ACTIVE;
+    first_task.tid = 0;
+    first_task.parent_td = 0;  // init task has no parent, 0 is a placeholder to signal that
+    init_task = &first_task;
+    current_task = init_task;
 
     /* Add init_task to ready queue */
+    add_task_to_ready_queue(init_task);
 
     /* Initialize task descriptors array */
     for (int i = 0; i < MAX_TASKS; i++) {
@@ -43,6 +44,8 @@ void sched_init(void)
     for (int i = 0; i < MAX_TASKS; i++) {
         uart_printf(CONSOLE, "task %d tid: <%d>\r\n", i, tasks[i].tid);
     }
+
+    mem_init();
 }
 
 void schedule(void)
@@ -98,8 +101,7 @@ TaskDescriptor_t *get_free_task_descriptor(void)
 
 void add_task_to_ready_queue(TaskDescriptor_t *task)
 {
-    // current_task = new_td;
-    // tasks[0] = new_td;
+    current_task = task;
 
     // add_to_ready_queue(new_td);
     task->state = READY;
