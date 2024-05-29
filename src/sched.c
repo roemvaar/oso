@@ -5,7 +5,7 @@
 #include "peripherals/uart.h"   // TODO(roemvaar): Delete this - don't print from here
 #include "mem.h"
 
-// TODO: https://developerhelp.microchip.com/xwiki/bin/view/software-tools/c-programming/multi-file-projects/static-variables/
+// TODO(roemvaar): https://developerhelp.microchip.com/xwiki/bin/view/software-tools/c-programming/multi-file-projects/static-variables/
 
 static TaskDescriptor_t *init_task;
 static TaskDescriptor_t *current_task;

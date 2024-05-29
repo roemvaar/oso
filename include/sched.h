@@ -75,7 +75,7 @@ typedef struct _cpu_context
     // unsigned long sp_el0;
     unsigned long fp;   /* fp is x29 */
     unsigned long sp;   /* The task's current stack pointer */
-    unsigned long pc;   /* sp is x30 */ 
+    unsigned long pc;   /* sp is x30 */
 } CPUContext_t;
 
 /* TaskDescriptor_t

@@ -46,7 +46,6 @@ static void setup_gpio(uint32_t pin, uint32_t setting, uint32_t resistor)
     GPIO_PUP_PDN_CNTRL_REG(reg) = status;   // write back
 }
 
-
 /*********** UART CONTROL **************************************/
 
 static char* const UART0_BASE = (char*)(PERIPHERALS_BASE + 0x201000);
@@ -132,7 +131,7 @@ unsigned char uart_getc(size_t line)
     unsigned char ch;
 
     /* wait for data if necessary */
-    while (UART_REG(line, UART_FR) & UART_FR_RXFE);
+    while (UART_REG(line, UART_FR) & UART_FR_RXFE) continue;;
     ch = UART_REG(line, UART_DR);
 
     return(ch);
@@ -141,7 +140,7 @@ unsigned char uart_getc(size_t line)
 void uart_putc(size_t line, unsigned char c)
 {
     /* make sure there is room to write more data */
-    while (UART_REG(line, UART_FR) & UART_FR_TXFF);
+    while (UART_REG(line, UART_FR) & UART_FR_TXFF) continue;
     UART_REG(line, UART_DR) = c;
 }
 

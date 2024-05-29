@@ -1,13 +1,20 @@
+TARGET ?= rpi4
+
+ifeq ($(TARGET), rpi4)
+    X_DIR:=/home/roemvaar/waterloo/cs652/xdev
+    TRIPLE:=aarch64-none-elf
+    ARCH:=cortex-a72
+else ifeq ($(TARGET), qemu)
+    $(error QEMU support is not implemented, yet)
+endif
+
 # Cross-compiler
 # TODO(roemvaar): make this a general path
-X_DIR:=/home/roemvaar/waterloo/cs652/xdev
 XBIN_DIR:=$(X_DIR)/bin
-TRIPLE=aarch64-none-elf
 CC=$(XBIN_DIR)/$(TRIPLE)-gcc
 READELF=$(XBIN_DIR)/$(TRIPLE)-readelf
 OBJCOPY=$(XBIN_DIR)/$(TRIPLE)-objcopy
 OBJDUMP=$(XBIN_DIR)/$(TRIPLE)-objdump
-ARCH:=cortex-a72
 
 # Directories
 BUILD_DIR=build
