@@ -1,7 +1,7 @@
 #include "util.h"
 
 /* ASCII character to integer */
-int a2d(char ch)
+int hex_char_to_int(char ch)
 {
     if (ch >= '0' && ch <= '9') {
         return ch - '0';

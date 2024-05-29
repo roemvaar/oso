@@ -6,7 +6,7 @@
 // #define NULL ((void*)0)
 
 // conversions
-int a2d(char ch);
+int hex_char_to_int(char ch);
 char a2i(char ch, char **src, int base, int *nump);
 void ui2a(unsigned int num, unsigned int base, char *bf);
 void i2a(int num, char *bf);
