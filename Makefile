@@ -1,7 +1,7 @@
 TARGET ?= rpi4
 
 ifeq ($(TARGET), rpi4)
-    X_DIR:=/home/roemvaar/waterloo/cs652/xdev
+	X_DIR:=/usr/bin/xdev
     TRIPLE:=aarch64-none-elf
     ARCH:=cortex-a72
 else ifeq ($(TARGET), qemu)
@@ -9,7 +9,6 @@ else ifeq ($(TARGET), qemu)
 endif
 
 # Cross-compiler
-# TODO(roemvaar): make this a general path
 XBIN_DIR:=$(X_DIR)/bin
 CC=$(XBIN_DIR)/$(TRIPLE)-gcc
 READELF=$(XBIN_DIR)/$(TRIPLE)-readelf

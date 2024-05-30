@@ -58,8 +58,9 @@ in the next section).
 
 ## Build
 
+First, install the cross toolchain, instructions [here](https://github.com/roemvaar/oso/wiki#toolchain).
+
 ```
-$ cd path/to/kernel
 $ make X_DIR=/path/to/cross_toolchain
 ```
 
