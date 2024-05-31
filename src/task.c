@@ -22,24 +22,23 @@ int task_create(int priority, EntryPoint_t code)
     /* Check that the priority is valid */
     if (priority < 0 || priority >= PRIORITY_LEVELS) {
         return -1;
-    } else if (get_num_tasks() >= MAX_TASKS) {
+    }
+
+    /* Get an empty slot on the task descriptor's array and fill the structure */
+    TaskDescriptor_t *new_task = get_free_task_descriptor();
+    if (new_task == NULL) {
         return -2;
     }
 
-    TaskDescriptor_t *new_task;
-    TaskDescriptor_t *current_task = get_current_task();
-
-    /* Get an empty slot on the task descriptor's array and fill the structure */
-    new_task = get_free_task_descriptor();
+    new_task->tid = get_new_tid();
     new_task->priority = priority;
+    new_task->parent_td = get_current_task();
     new_task->state = ACTIVE;
-    new_task->tid = num_tasks;
-    new_task->parent_td = current_task;
     new_task->code = code;
     new_task->mem = get_mem_by_tid(new_task->tid);
 
     /* Add new task into ready_queue */
-    add_task_to_ready_queue(new_task);
+    add_to_ready_queue(new_task);
 
     return new_task->tid;
 }
@@ -75,7 +74,7 @@ int task_parent_tid(void)
 
     TaskDescriptor_t *current_task = get_current_task();
 
-    // Check if the current task is init_task
+    // Check if the current task is the init_task
     if (current_task->tid == 0) {
         parent_tid = 0;
     } else {
@@ -98,24 +97,16 @@ int task_parent_tid(void)
  */
 void task_yield(void)
 {
-    /* this is simply a svc N system call */
-
-    return;
+    stop_task();
 }
 
 /* task_exit
  *
  * Causes a task to cease execution permanently. It is removed from all priority
  * queues, send queues, receive queues and event queues. Resources owned by the
- * task, primarily its memory and task descriptor, may be reclaimed. 
+ * task, primarily its memory and task descriptor, may be reclaimed.
  */
 void task_exit(void)
 {
-    /* The task will never again run. It may still retain some resources if resource re-use is not fully implemented. */
-    // For most purposes this is enough to tell the program that this
-    // entry can be overwritten
-    // curr_task->entry = NULL;
-    // switch_to_new_task();
-
-    return;
+    delete_task();
 }

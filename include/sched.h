@@ -22,10 +22,6 @@ typedef struct _task_descriptor TaskDescriptor_t;
 typedef struct mem_block MemBlock_t;
 typedef void (*EntryPoint_t)(void);
 
-// extern TaskDescriptor_t *init_task;
-// extern static TaskDescriptor_t *init_task;
-// extern TaskDescriptor_t *current_task;
-// extern TaskDescriptor_t *tasks[MAX_TASKS_PER_PRIORITY];
 extern int num_tasks;
 
 /* TaskState_t
@@ -95,13 +91,12 @@ typedef struct _task_descriptor
 
 void sched_init(void);
 void schedule(void);
-// void switch_to(TaskDescriptor_t *next);
-int get_current_task_tid(void);
-TaskDescriptor_t *get_current_task(void);
 int get_num_tasks(void);
+int get_new_tid(void);
 TaskDescriptor_t *get_free_task_descriptor(void);
-void add_task_to_ready_queue(TaskDescriptor_t *task);
-// int find_first_empty(struct task_descriptor td[]);
-// TaskDescriptor_t *get_current_task(void);
+void add_to_ready_queue(TaskDescriptor_t *task);
+TaskDescriptor_t *get_current_task(void);
+void stop_task(void);
+void delete_task(void);
 
 #endif  /* SCHED_H_ */

@@ -5,17 +5,10 @@
 #include "peripherals/uart.h"   // TODO(roemvaar): Delete this - don't print from here
 #include "mem.h"
 
-// TODO(roemvaar): https://developerhelp.microchip.com/xwiki/bin/view/software-tools/c-programming/multi-file-projects/static-variables/
-
+static TaskDescriptor_t tasks[MAX_TASKS];
 static TaskDescriptor_t *init_task;
 static TaskDescriptor_t *current_task;
 int num_tasks;
-static TaskDescriptor_t tasks[MAX_TASKS];
-
-// TaskDescriptor_t *tasks_descriptors = tasks;
-// int tasks_stacks[MAX_TASKS];
-// static TaskDescriptor_t *tasks[MAX_TASKS];
-// static TaskDescriptor_t *task_bank;
 
 void sched_init(void)
 {
@@ -24,28 +17,18 @@ void sched_init(void)
     /* Create first task `init_task` with tid 0 and add it to ready queue */
     TaskDescriptor_t first_task = tasks[0];
 
-    /* Get memory for init_task */
-    first_task.priority = 0;
-    first_task.state = ACTIVE;
+    /* Fill task descriptor for init_task */
     first_task.tid = 0;
+    first_task.priority = 0;
     first_task.parent_td = 0;  // init task has no parent, 0 is a placeholder to signal that
+    first_task.state = ACTIVE;
+    // TODO(roemvaar): code (routine) for init task is mising
+    // TODO(roemvaar): mem block allocation missing for init task
     init_task = &first_task;
     current_task = init_task;
 
     /* Add init_task to ready queue */
-    add_task_to_ready_queue(init_task);
-
-    /* Initialize task descriptors array */
-    for (int i = 0; i < MAX_TASKS; i++) {
-        tasks[i].tid = i;
-    }
-
-    /* Initialize task descriptors array */
-    for (int i = 0; i < MAX_TASKS; i++) {
-        uart_printf(CONSOLE, "task %d tid: <%d>\r\n", i, tasks[i].tid);
-    }
-
-    mem_init();
+    add_to_ready_queue(init_task);
 }
 
 void schedule(void)
@@ -71,6 +54,13 @@ int get_num_tasks(void)
     return num_tasks;
 }
 
+// TODO(roemvaar): algorithm to provide tid's
+int get_new_tid(void)
+{
+    return num_tasks;
+}
+
+// TODO(roemvaar): select algorithm on how to manage the task descriptors - td[i].entry == NULL
 TaskDescriptor_t *get_free_task_descriptor(void)
 {
     num_tasks++;
@@ -99,14 +89,10 @@ TaskDescriptor_t *get_free_task_descriptor(void)
 //     return;
 // }
 
-void add_task_to_ready_queue(TaskDescriptor_t *task)
+// TODO(roemvaar): create one ready queue per priority
+void add_to_ready_queue(TaskDescriptor_t *task)
 {
-    current_task = task;
-
-    // add_to_ready_queue(new_td);
-    task->state = READY;
-
-    uart_printf(1, "Task with tid: <%d> and priority: %d was added to the READY queue\r\n", task->tid, task->priority);
+    uart_printf(1, "Task with tid: <%d> and priority: %d was added to its respective READY queue\r\n", task->tid, task->priority);
 }
 
 // // Have to pass by value to get it added to scheduler
@@ -150,11 +136,6 @@ void add_task_to_ready_queue(TaskDescriptor_t *task)
 //     return task;
 // }
 
-// void add_to_ready_queue(TaskDescriptor_t *new_td)
-// {
-//     uart_puts(1, "TODO: Add newly created task to its respective priority ready!\r\n");
-// }
-
 // Get the index of the next runnable task
 // int find_next_task(struct task_descriptor td[], size_t index)
 // {
@@ -189,4 +170,15 @@ void add_task_to_ready_queue(TaskDescriptor_t *task)
 TaskDescriptor_t *get_current_task(void)
 {
     return current_task;
+}
+
+void stop_task(void)
+{
+    return;
+}
+
+// TODO(roemvaar): Resources owned by the task, primarily its memory and task descriptor, may be reclaimed.
+void delete_task(void)
+{
+    current_task->state = EXITED;
 }
