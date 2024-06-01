@@ -8,6 +8,7 @@
 static TaskDescriptor_t tasks[MAX_TASKS];
 static TaskDescriptor_t *init_task;
 static TaskDescriptor_t *current_task;
+Queue_t priority_queue;
 int num_tasks;
 
 void sched_init(void)
@@ -21,6 +22,7 @@ void sched_init(void)
     first_task.tid = 0;
     first_task.priority = 0;
     first_task.parent_td = 0;  // init task has no parent, 0 is a placeholder to signal that
+    first_task.next_task_ready_queue = NULL;
     first_task.state = ACTIVE;
     // TODO(roemvaar): code (routine) for init task is mising
     // TODO(roemvaar): mem block allocation missing for init task
@@ -28,7 +30,8 @@ void sched_init(void)
     current_task = init_task;
 
     /* Add init_task to ready queue */
-    add_to_ready_queue(init_task);
+    priority_queue.front = init_task;
+    priority_queue.rear = init_task;
 }
 
 void schedule(void)
@@ -90,51 +93,42 @@ TaskDescriptor_t *get_free_task_descriptor(void)
 // }
 
 // TODO(roemvaar): create one ready queue per priority
+// Initially, we will only use a single priority queue (there should
+// be one queue per priority or a single priority queue that orders it
+// from higher priority to lower priority, but that's something for later)
+// this is enqueue
 void add_to_ready_queue(TaskDescriptor_t *task)
 {
-    uart_printf(1, "Task with tid: <%d> and priority: %d was added to its respective READY queue\r\n", task->tid, task->priority);
+    /* If queue is empty, then the new node is both the frond and rear */
+    // This will only happen with init_task
+    // if (priority_queue.rear == NULL) {
+    //     priority_queue.front = task;
+    //     priority_queue.rear = task;
+    //     task->next_task_ready_queue = NULL;
+    //     return;
+    // }
+
+    /* Add the task at the end of the queue and change the rear pointer */
+    priority_queue.rear->next_task_ready_queue = task;
+    priority_queue.rear = task;
+    task->next_task_ready_queue = NULL;
+
+    uart_printf(CONSOLE, "Task with tid: <%d> and priority: %d was added to its respective READY queue\r\n", task->tid, task->priority);
 }
 
-// // Have to pass by value to get it added to scheduler
-// //  RETURNS: The task's address
-// TaskDescriptor *add_task(task_descriptor td, unsigned int priority)
-// {
-//     // // TODO... Clean it up
-//     // //assert(priority < PRIORITY_LEVELS);
-//     // TaskDescriptor *chosen_list;
+void print_priority_queue(void)
+{
+    uart_printf(CONSOLE, "*****************************************\r\n");
 
-//     // switch (priority) {
-//     //     case 0:
-//     //         chosen_list = p0;
-//     //         break;
-//     //     case 1:
-//     //         chosen_list = p1;
-//     //         break;
-//     //     case 2:
-//     //         chosen_list = p2;
-//     //         break;
-//     //     case 3:
-//     //         chosen_list = p3;
-//     //         break;
-//     //     default:
-//     //         return -2; // Priority not supported
-//     // }
+    TaskDescriptor_t *it = priority_queue.front;
 
-//     // if (chosen_list == NULL) {
-//     //     return -1; // Desired priority queue is full
-//     // }
+    while (it != NULL) {
+        uart_printf(CONSOLE, "<%d>: %d -> ", it->tid, it->priority);
+        it = it->next_task_ready_queue;
+    }
 
-//     // size_t index = find_first_empty(chosen_list);
-//     // chosen_list[index] = td; // Add it
-
-//     // return &(chosen_list[index]); // Return nothing for now
-
-//     task_descriptor *task;
-
-//     tasks[index] = task
-
-//     return task;
-// }
+    uart_printf(CONSOLE, "*****************************************\r\n");
+}
 
 // Get the index of the next runnable task
 // int find_next_task(struct task_descriptor td[], size_t index)

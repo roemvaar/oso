@@ -82,12 +82,20 @@ typedef struct _task_descriptor
     int tid;                        /* Task identifier (tid), which is unique among all active tasks */
     int priority;                   /* The task's priority */
     TaskDescriptor_t *parent_td;    /* A pointer to the TaskDescriptor of the task that created it, its parent */
-    // TaskDescriptor_t *next_task_ready_queue;  /* Pointer to TaskDescriptor of the next ready task (schedule) */
-    // TaskDescriptor_t *next_task_send_queue;  /* Pointer to TaskDescriptor of the next ready task (send queue) */
+    TaskDescriptor_t *next_task_ready_queue;  /* Pointer to TaskDescriptor of the next ready task (schedule) */
+    TaskDescriptor_t *next_task_send_queue;   /* Pointer to TaskDescriptor of the next ready task (send queue) */
     TaskState_t state;              /* The task's current run state */
     EntryPoint_t code;              /* Pointer to the instruction memory for this task */
     MemBlock_t *mem;
 } TaskDescriptor_t;
+
+/* Queue_t
+ */
+typedef struct _queue
+{
+    TaskDescriptor_t *front;
+    TaskDescriptor_t *rear;
+} Queue_t;
 
 void sched_init(void);
 void schedule(void);
@@ -98,5 +106,8 @@ void add_to_ready_queue(TaskDescriptor_t *task);
 TaskDescriptor_t *get_current_task(void);
 void stop_task(void);
 void delete_task(void);
+
+/* DEBUG */
+void print_priority_queue(void);
 
 #endif  /* SCHED_H_ */

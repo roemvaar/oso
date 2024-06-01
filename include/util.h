@@ -3,7 +3,7 @@
 
 #include <stddef.h>     // TODO(roemvaar): DELETE THIS - don't use stdlib
 
-// #define NULL ((void*)0)
+// #define NULL ((void*)0)   // TODO(roemvaar): define NULL
 
 // conversions
 int hex_char_to_int(char ch);

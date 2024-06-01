@@ -47,6 +47,7 @@ int kmain(void)
 {
     start_kernel();
 
+    uart_printf(CONSOLE, "*****************************************\r\n");
     uart_printf(CONSOLE, "RTOS by roemvaar (May, 2024).\r\n");
 
     /* Create two user tasks */
@@ -62,10 +63,13 @@ int kmain(void)
         return ret;
     }
 
-    for (int i = 0; i < num_tasks; i++) {
-        // Print state
-        continue;
+    ret = task_create(1, &display_ascii_art);
+    if (ret < 0) {
+        uart_printf(CONSOLE, "Error creating second task: %d\r\n", ret);
+        return ret;
     }
+
+    print_priority_queue();
 
     char input;
     uint32_t count;
@@ -80,13 +84,6 @@ int kmain(void)
             uart_printf(CONSOLE, "\r\n");
         } else {
             uart_putc(CONSOLE, input);
-        }
-
-        display_ascii_art();
-
-        for (int i = 0; i < 10; i++) {
-            uart_printf(CONSOLE, "Delay [%d]...\r\n", i);
-            delay(1000000);
         }
     }
 
