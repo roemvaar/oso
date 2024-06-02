@@ -57,3 +57,5 @@ build/*
 TODO*
 .vscode/*
 *.log
+cov-int/*
+*.xz
