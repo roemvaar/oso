@@ -22,8 +22,6 @@ typedef struct _task_descriptor TaskDescriptor_t;
 typedef struct mem_block MemBlock_t;
 typedef void (*EntryPoint_t)(void);
 
-extern int num_tasks;
-
 /* TaskState_t
  *
  * A task is in one of the following run states:

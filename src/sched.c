@@ -8,26 +8,26 @@
 static TaskDescriptor_t tasks[MAX_TASKS];
 static TaskDescriptor_t *init_task;
 static TaskDescriptor_t *current_task;
-Queue_t priority_queue;
-int num_tasks;
+static Queue_t priority_queue;
+static int num_tasks;
 
 void sched_init(void)
 {
     num_tasks = 0;
 
-    /* Create first task `init_task` with tid 0 and add it to ready queue */
-    TaskDescriptor_t first_task = tasks[0];
-
-    /* Fill task descriptor for init_task */
-    first_task.tid = 0;
-    first_task.priority = 0;
-    first_task.parent_td = 0;  // init task has no parent, 0 is a placeholder to signal that
-    first_task.next_task_ready_queue = NULL;
-    first_task.state = ACTIVE;
+    /* `init_task` always has tid 0, we need to fill the task descriptor
+     * and add it to ready queue
+     */
+    tasks[0].tid = 0;
+    tasks[0].priority = 0;
+    tasks[0].parent_td = 0;  /* init task has no parent, 0 is a placeholder to signal that */
+    tasks[0].state = ACTIVE;
+    tasks[0].next_task_ready_queue = NULL;
     // TODO(roemvaar): code (routine) for init task is mising
     // TODO(roemvaar): mem block allocation missing for init task
-    init_task = &first_task;
-    current_task = init_task;
+
+    init_task = &tasks[0];
+    current_task = &tasks[0];
 
     /* Add init_task to ready queue */
     priority_queue.front = init_task;
@@ -99,19 +99,11 @@ TaskDescriptor_t *get_free_task_descriptor(void)
 // this is enqueue
 void add_to_ready_queue(TaskDescriptor_t *task)
 {
-    /* If queue is empty, then the new node is both the frond and rear */
-    // This will only happen with init_task
-    // if (priority_queue.rear == NULL) {
-    //     priority_queue.front = task;
-    //     priority_queue.rear = task;
-    //     task->next_task_ready_queue = NULL;
-    //     return;
-    // }
-
     /* Add the task at the end of the queue and change the rear pointer */
-    priority_queue.rear->next_task_ready_queue = task;
-    priority_queue.rear = task;
-    task->next_task_ready_queue = NULL;
+    Queue_t *q = &priority_queue;
+
+    q->rear->next_task_ready_queue = task;
+    q->rear = task;
 
     uart_printf(CONSOLE, "Task with tid: <%d> and priority: %d was added to its respective READY queue\r\n", task->tid, task->priority);
 }
@@ -123,10 +115,11 @@ void print_priority_queue(void)
     TaskDescriptor_t *it = priority_queue.front;
 
     while (it != NULL) {
-        uart_printf(CONSOLE, "<%d>: %d -> ", it->tid, it->priority);
+        uart_printf(CONSOLE, "%d: %d --> ", it->tid, it->priority);
         it = it->next_task_ready_queue;
     }
 
+    uart_printf(CONSOLE, "NULL\r\n");
     uart_printf(CONSOLE, "*****************************************\r\n");
 }
 
