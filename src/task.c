@@ -35,6 +35,7 @@ int task_create(int priority, EntryPoint_t code)
     new_task->parent_td = get_current_task();
     new_task->state = ACTIVE;
     new_task->next_task_ready_queue = NULL;
+    new_task->next_task_send_queue = NULL;
     new_task->code = code;
     new_task->mem = get_mem_by_tid(new_task->tid);
 
