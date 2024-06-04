@@ -1,4 +1,4 @@
-name: Build
+name: CI
 
 on:
   push:
@@ -13,11 +13,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-#    - name: configure
-#      run: ./configure
-    - name: make
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install xz-utils
+        sudo wget https://github.com/roemvaar/baremetal-qemu-aarch64/blob/main/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf.tar.xz
+        sudo mkdir -p /usr/bin/xdev
+        sudo tar -xaf arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf.tar.xz -C /usr/bin/xdev
+
+    - name: Build
       run: make
-#    - name: make check
-#      run: make check
-#    - name: make distcheck
-#      run: make distcheck
