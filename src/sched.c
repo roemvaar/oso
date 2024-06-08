@@ -42,14 +42,6 @@ void sched_init(void)
 
 void schedule(void)
 {
-    // // TODO: Update for using priority queues, for now use the first created task
-    // TaskDescriptor_t *next = tasks[0];
-    /* The task that has just run, is running, or is about to run. Scheduling, which happens near the end of kernel processing,
-     * changes the active task. On a single processor only one task can be active at a time.
-     */
-
-    // switch_to(next);
-
     return;
 }
 
