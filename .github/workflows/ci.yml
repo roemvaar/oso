@@ -46,6 +46,3 @@ jobs:
         git submodule update --init --recursive
         cd test
         make test
-
-    - name: Run Tests
-      run: ./test
