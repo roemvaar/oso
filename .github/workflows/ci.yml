@@ -7,10 +7,16 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  cpplint:
     runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v1
+    - run: pip install cpplint
+    - run: cpplint --exclude=test/Unity --filter=-legal/copyright,-whitespace/braces,-readability/casting,-build/include_subdir,-build/header_guard,-runtime/int --linelength=120 --quiet --recursive .
 
+  build:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Install Dependencies
@@ -30,3 +36,16 @@ jobs:
         git submodule update --init --recursive
         cd test
         make test
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build Tests
+      run: |
+        git submodule update --init --recursive
+        cd test
+        make test
+
+    - name: Run Tests
+      run: ./test

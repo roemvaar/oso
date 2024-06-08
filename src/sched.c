@@ -120,7 +120,8 @@ void add_to_ready_queue(TaskDescriptor_t *task)
 
     task->next_task_ready_queue = NULL;
 
-    uart_printf(CONSOLE, "Task with tid: <%d> and priority: %d was added to its respective READY queue\r\n", task->tid, task->priority);
+    uart_printf(CONSOLE, "Task with tid: <%d> and priority: %d was added to its respective READY queue\r\n",
+                task->tid, task->priority);
 }
 
 void print_priority_queue(void)
