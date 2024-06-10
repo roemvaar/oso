@@ -1,19 +1,12 @@
 # OSo
 
-OSo ("bear" in Spanish) is a microkernel for embedded systems. It currently
-support Raspberry Pi 4 Model B.
+OSo ("bear" in Spanish) is a microkernel for embedded systems as designed and developed
+by Roberto Valenzuela (roemvaar). It currently supports Raspberry Pi 4 Model B.
 
 <!--
-This repository holds source code and documentation related to the CS 652
-(Real-time Programming) kernel with some modifications, as designed and developed
-by Roberto Valenzuela (roemvaar).
-
 
 ## Description
 Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
 ## Visuals
 Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
@@ -22,6 +15,13 @@ Depending on what you are making, it can be a good idea to include screenshots o
 Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
 -->
+
+## Build Status
+
+**master:**  <a href="https://scan.coverity.com/projects/roemvaar-oso">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/30303/badge.svg"/>
+</a>
 
 ## Design Goals
 
