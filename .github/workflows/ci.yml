@@ -1,4 +1,4 @@
-name: CI
+name: Raspberry Pi 4 CI
 
 on:
   push:

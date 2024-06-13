@@ -50,31 +50,14 @@ int kmain(void)
     uart_printf(CONSOLE, "*****************************************\r\n");
     uart_printf(CONSOLE, "RTOS by roemvaar (May, 2024).\r\n");
 
-    /* Create two user tasks */
-    int ret = task_create(1, &user_task);
+    /* Kernel 1 Assignment */
+    int ret = task_create(2, &first_user_task);
     if (ret < 0) {
-        uart_printf(CONSOLE, "Error creating first task: %d\r\n", ret);
+        uart_printf(CONSOLE, "Error creating first user task: %d\r\n", ret);
         return ret;
     }
 
-    ret = task_create(3, &display_ascii_art);
-    if (ret < 0) {
-        uart_printf(CONSOLE, "Error creating second task: %d\r\n", ret);
-        return ret;
-    }
-
-    ret = task_create(4, &display_ascii_art);
-    if (ret < 0) {
-        uart_printf(CONSOLE, "Error creating second task: %d\r\n", ret);
-        return ret;
-    }
-
-    ret = task_create(2, &display_ascii_art);
-    if (ret < 0) {
-        uart_printf(CONSOLE, "Error creating second task: %d\r\n", ret);
-        return ret;
-    }
-
+    /* Debug */
     print_priority_queue();
 
     char input;
