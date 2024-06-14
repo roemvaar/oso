@@ -57,8 +57,11 @@ int kmain(void)
         return ret;
     }
 
-    /* Debug */
+#ifndef DEBUG
     print_priority_queue();
+#endif
+
+    schedule();
 
     char input;
     uint32_t count;

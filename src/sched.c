@@ -2,6 +2,7 @@
 
 #include <stddef.h>     // TODO(roemvaar): DELETE THIS - don't use stdlib
 
+#include "arm/utils.h"
 #include "peripherals/uart.h"   // TODO(roemvaar): Delete this - don't print from here
 #include "mem.h"
 
@@ -42,8 +43,39 @@ void sched_init(void)
 
 void schedule(void)
 {
-    return;
+    switch_to(&tasks[1]);
 }
+
+void switch_to(TaskDescriptor_t *next)
+{
+    if (current_task == next) {
+        return;
+    }
+
+    TaskDescriptor_t *prev = current_task;
+    current_task = next;
+
+#ifndef DEBUG
+    uart_printf(CONSOLE, "Switching to task with tid: %d\r\n", next->tid);
+#endif
+
+    /* TODO(roemvaar): Context switch mechanism is not working */
+    /* Context switch code */
+    cpu_switch_to(prev, next);
+}
+
+// void switch_to_new_task(void)
+// {
+//     // task_descriptor queues[PRIORITY_LEVELS][16];
+
+//     // for (size_t i = 0; i < PRIORITY_LEVELS; ++i) {
+//     //     size_t index = find_next_task(queues[i], curr_task_index);
+//     //     if (index != -1) {
+//     //         curr_task_index = i;
+//     //         curr_task = &(queues[i][index]);
+//     //     }
+//     // }
+// }
 
 int get_current_task_tid(void)
 {
@@ -90,14 +122,6 @@ TaskDescriptor_t *get_free_task_descriptor(void)
 
 //     return -1;
 // }
-
-void switch_to(TaskDescriptor_t *next)
-{
-    current_task = next;
-    uart_printf(CONSOLE, "Switching to task with tid: %d\r\n", next->tid);
-
-    /* Context switch code */
-}
 
 // TODO(roemvaar): create one ready queue per priority
 // Initially, we will only use a single priority queue (there should
@@ -149,25 +173,6 @@ void print_priority_queue(void)
 //     }
 
 //     return -1;
-// }
-
-
-// void switch_to_new_task(void)
-// {
-//     // task_descriptor queues[PRIORITY_LEVELS][16];
-
-//     // for (size_t i = 0; i < PRIORITY_LEVELS; ++i) {
-//     //     size_t index = find_next_task(queues[i], curr_task_index);
-//     //     if (index != -1) {
-//     //         curr_task_index = i;
-//     //         curr_task = &(queues[i][index]);
-//     //     }
-//     // }
-// }
-
-// void context_switch()
-// {
-//     // TODO: Build a context switch here
 // }
 
 TaskDescriptor_t *get_current_task(void)

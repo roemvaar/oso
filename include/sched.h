@@ -103,6 +103,7 @@ void add_to_ready_queue(TaskDescriptor_t *task);
 TaskDescriptor_t *get_current_task(void);
 void stop_task(void);
 void delete_task(void);
+void switch_to(TaskDescriptor_t *next);
 
 /* DEBUG */
 void print_priority_queue(void);
