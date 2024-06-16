@@ -57,7 +57,7 @@ int kmain(void)
         return ret;
     }
 
-#ifndef DEBUG
+#ifdef DEBUG
     print_priority_queue();
 #endif
 

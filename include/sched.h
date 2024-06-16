@@ -67,7 +67,8 @@ typedef struct _cpu_context
     // unsigned long elr_el1;
     // unsigned long spsr_el1;
     unsigned long fp;   /* fp is x29 */
-    unsigned long sp;   /* The task's current stack pointer - Once user space/kernel space are working: unsigned long sp_el0*/
+    unsigned long sp;   /* The task's current stack pointer */
+                        /* Once user space/kernel space are working: unsigned long sp_el0 */
     unsigned long pc;   /* sp is x30 */
 } CPUContext_t;
 
