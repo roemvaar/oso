@@ -32,7 +32,7 @@ int task_create(int priority, EntryPoint_t code)
 
     new_task->tid = get_new_tid();
     new_task->priority = priority;
-    new_task->parent_td = get_current_task();
+    new_task->parent = get_current_task();
     new_task->state = ACTIVE;
     new_task->next_task_ready_queue = NULL;
     new_task->next_task_send_queue = NULL;
@@ -80,7 +80,7 @@ int task_parent_tid(void)
     if (current_task->tid == 0) {
         parent_tid = 0;
     } else {
-        TaskDescriptor_t *parent = current_task->parent_td;
+        TaskDescriptor_t *parent = current_task->parent;
 
         if (parent->state == EXITED) {
             parent_tid = -1;

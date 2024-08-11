@@ -52,7 +52,7 @@ void first_user_task(void)
 void test_task(void)
 {
     TaskDescriptor_t *curr = get_current_task();
-    TaskDescriptor_t *parent = curr->parent_td;
+    TaskDescriptor_t *parent = curr->parent;
 
     uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", curr->tid, parent->tid);
 

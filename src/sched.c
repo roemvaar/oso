@@ -25,7 +25,7 @@ void sched_init(void)
      */
     tasks[0].tid = 0;
     tasks[0].priority = 0;
-    tasks[0].parent_td = 0;  /* init task has no parent, 0 is a placeholder to signal that */
+    tasks[0].parent = 0;  /* init task has no parent, 0 is a placeholder to signal that */
     tasks[0].state = ACTIVE;
     tasks[0].next_task_ready_queue = NULL;
     tasks[0].next_task_send_queue = NULL;

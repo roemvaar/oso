@@ -54,6 +54,9 @@ typedef enum
  */
 typedef struct _cpu_context
 {
+    /* Callee-saved registers x19 to x28 
+     * A subroutine invocation must preserve the contents of the registers x19-x29 and SP
+     */
     unsigned long x19;
     unsigned long x20;
     unsigned long x21;
@@ -64,9 +67,9 @@ typedef struct _cpu_context
     unsigned long x26;
     unsigned long x27;
     unsigned long x28;
-    // unsigned long elr_el1;
+    // unsigned long elr_el1;   /* x30 LR The Link Register */
     // unsigned long spsr_el1;
-    unsigned long fp;   /* fp is x29 */
+    unsigned long fp;   /* x29 FP The Frame Pointer */
     unsigned long sp;   /* The task's current stack pointer */
                         /* Once user space/kernel space are working: unsigned long sp_el0 */
     unsigned long pc;   /* sp is x30 */
@@ -79,7 +82,7 @@ typedef struct _task_descriptor
     CPUContext_t cpu_context;       /* This is the context, includes the tasks's SPSR */
     int tid;                        /* Task identifier (tid), which is unique among all active tasks */
     int priority;                   /* The task's priority */
-    TaskDescriptor_t *parent_td;    /* A pointer to the TaskDescriptor of the task that created it, its parent */
+    TaskDescriptor_t *parent;    /* A pointer to the TaskDescriptor of the task that created it, its parent */
     TaskDescriptor_t *next_task_ready_queue;  /* Pointer to TaskDescriptor of the next ready task (schedule) */
     TaskDescriptor_t *next_task_send_queue;   /* Pointer to TaskDescriptor of the next ready task (send queue) */
     TaskState_t state;              /* The task's current run state */
