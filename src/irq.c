@@ -9,23 +9,24 @@ void enable_interrupt(unsigned int irq)
     uart_printf(CONSOLE, "irq: %x\r\n", irq);
     unsigned int n = irq / 32;
     unsigned int offset = irq % 32;
-    unsigned int enableRegister = GICD_ENABLE_IRQ_BASE + (4*n);
-    uart_printf(CONSOLE, "irq: EnableRegister: %x\r\n", enableRegister);
-    put32(enableRegister, 1 << offset);
+    unsigned int enable_register = GICD_ENABLE_IRQ_BASE + (4 * n);
+    uart_printf(CONSOLE, "irq: EnableRegister: %x\r\n", enable_register);
+    put32(enable_register, 1 << offset);
 }
 
 void assign_target(unsigned int irq, unsigned int cpu)
 {
     (void)cpu;
     unsigned int n = irq / 4;
-    unsigned int targetRegister = GIC_IRQ_TARGET_BASE + (4*n);
+    unsigned int target_register = GIC_IRQ_TARGET_BASE + (4 * n);
     // Currently we only enter the target CPU 0
-    put32(targetRegister, get32(targetRegister) | (1 << 8));
+    put32(target_register, get32(target_register) | (1 << 8));
 }
 
 void enable_interrupt_controller()
 {
     assign_target(SYSTEM_TIMER_IRQ_1, 0);
+    // assign_target(SYSTEM_TIMER_IRQ_3, 0);
     enable_interrupt(SYSTEM_TIMER_IRQ_1);
 }
 

@@ -17,7 +17,7 @@
 /* VideoCore interrupts
  *
  * VC (=VideoCore) starts at 96
- * BCM2711 ARM Peripherals, p.87/166
+ * BCM2711 ARM Peripherals, p. 87/166
  */
 #define SYSTEM_TIMER_IRQ_0 (0x60)  // 96
 #define SYSTEM_TIMER_IRQ_1 (0x61)  // 97

@@ -6,6 +6,8 @@
 #include "task.h"
 #include "user/demo1.h"
 
+#define DEBUG 1
+
 /* start_kernel
  *
  * The kernel needs to initialize important features, such as the
@@ -36,6 +38,14 @@ void start_kernel(void)
     irq_enable();
     uart_printf(CONSOLE, "init: IRQ enable init completed...\r\n");
 
+#ifdef DEBUG
+    /* Print current execution level, OSo should run on EL1, and user applications
+       should run on EL0.
+     */
+    int el = get_el();
+    uart_printf(CONSOLE, "init: Exception level: EL%d...\r\n", el);
+#endif
+
     /* Set up the scheduler prior starting any interrupts
      * (such as the system timer interrupt). 
      */
@@ -50,18 +60,18 @@ int kmain(void)
     uart_printf(CONSOLE, "*****************************************\r\n");
     uart_printf(CONSOLE, "RTOS by roemvaar (May, 2024).\r\n");
 
-    /* Kernel 1 Assignment */
-    int ret = task_create(2, &first_user_task);
-    if (ret < 0) {
-        uart_printf(CONSOLE, "Error creating first user task: %d\r\n", ret);
-        return ret;
-    }
+    // /* Kernel 1 Assignment */
+    // int ret = task_create(2, &first_user_task);
+    // if (ret < 0) {
+    //     uart_printf(CONSOLE, "Error creating first user task: %d\r\n", ret);
+    //     return ret;
+    // }
 
 #ifdef DEBUG
     print_priority_queue();
 #endif
 
-    schedule();
+    // schedule();
 
     char input;
     uint32_t count;
