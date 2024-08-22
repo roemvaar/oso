@@ -6,7 +6,28 @@
 #include "task.h"
 #include "user/demo1.h"
 
-#define DEBUG 1
+#define DEBUG
+
+void task1()
+{
+    for (int i = 0; i < 5; i++) {
+        uart_printf(CONSOLE, "Task 1...\r\n");
+    }
+}
+
+void task2()
+{
+    for (int i = 0; i < 10; i++) {
+        uart_printf(CONSOLE, "Task 2...\r\n");
+    }
+}
+
+void task3()
+{
+    for (int i = 0; i < 10; i++) {
+        uart_printf(CONSOLE, "Task 3...\r\n");
+    }
+}
 
 /* start_kernel
  *
@@ -67,27 +88,45 @@ int kmain(void)
     //     return ret;
     // }
 
+    int ret = task_create(1, &task1);
+    ret = task_create(1, &task2);
+    ret = task_create(1, &task3);
+
 #ifdef DEBUG
     print_priority_queue();
 #endif
 
+    // Polling
+    while(1) {
+        task1();
+        delay(1000000);
+        task2();
+        delay(1000000);
+        task3();
+        delay(5000000);
+    }
+
+    // while (1) {
+    //     schedule();
+    // }
+
     // schedule();
 
-    char input;
-    uint32_t count;
+    // char input;
+    // uint32_t count;
 
-    while (1) {
-        input = uart_getc(CONSOLE);
+    // while (1) {
+    //     input = uart_getc(CONSOLE);
 
-        if (input == '$') {
-            count = sys_timer_get_count();
-            uart_printf(CONSOLE, "Timer count: %u\r\n", count);
-        } else if (input == '\n' || input == '\r') {
-            uart_printf(CONSOLE, "\r\n");
-        } else {
-            uart_putc(CONSOLE, input);
-        }
-    }
+    //     if (input == '$') {
+    //         count = sys_timer_get_count();
+    //         uart_printf(CONSOLE, "Timer count: %u\r\n", count);
+    //     } else if (input == '\n' || input == '\r') {
+    //         uart_printf(CONSOLE, "\r\n");
+    //     } else {
+    //         uart_putc(CONSOLE, input);
+    //     }
+    // }
 
     return 0;
 }

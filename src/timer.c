@@ -10,7 +10,7 @@
  */
 
 const unsigned int timer1_interval = 200000;
-const unsigned int timer3_interval = 200000 / 4;
+const unsigned int timer3_interval = 200000;
 unsigned int timer1_val = 0;
 unsigned int timer3_val = 0;
 
@@ -20,9 +20,9 @@ void sys_timer_init(void)
     timer1_val += timer1_interval;
     put32(TIMER_C1, timer1_val);
 
-    timer1_val = get32(TIMER_CLO);
-    timer1_val += timer1_interval;
-    put32(TIMER_C3, timer1_val);
+    timer3_val = get32(TIMER_CLO);
+    timer3_val += timer3_interval;
+    put32(TIMER_C3, timer3_val);
 }
 
 void handle_timer_1_irq(void)
@@ -33,7 +33,7 @@ void handle_timer_1_irq(void)
      * https://github.com/s-matyukevich/raspberry-pi-os/blob/master/docs/lesson03/rpi-os.md
      */
     put32(TIMER_CS, TIMER_CS_M1);
-    uart_printf(CONSOLE, "[irq] Timer 1 interrupt received.\r\n");
+    // uart_printf(CONSOLE, "[irq] Timer 1 interrupt received.\r\n");
 }
 
 void handle_timer_3_irq(void)
@@ -42,7 +42,7 @@ void handle_timer_3_irq(void)
     put32(TIMER_C3, timer3_val);
     /* TODO: What are we setting here? */
     put32(TIMER_CS, TIMER_CS_M3);
-    uart_printf(CONSOLE, "[irq] Timer 3 interrupt received\r\n...");
+    uart_printf(CONSOLE, "[irq] Timer 1 interrupt received.\r\n");
 }
 
 uint32_t sys_timer_get_count(void)

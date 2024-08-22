@@ -12,6 +12,8 @@ static TaskDescriptor_t *current_task;
 static Queue_t priority_queue;
 static int num_tasks;
 
+#define DEBUG
+
 void sched_init(void)
 {
     num_tasks = 0;
@@ -20,12 +22,12 @@ void sched_init(void)
     priority_queue.front = NULL;
     priority_queue.rear = NULL;
 
-    /* `init_task` always has tid 0, we need to fill the task descriptor
+    /* `init_task` always has tid 1, we need to fill the task descriptor
      * and add it to ready queue
      */
-    tasks[0].tid = 0;
+    tasks[0].tid = 1;
     tasks[0].priority = 0;
-    tasks[0].parent = 0;  /* init task has no parent, 0 is a placeholder to signal that */
+    tasks[0].parent = NULL;  /* init task has no parent, NULL is a placeholder to signal that */
     tasks[0].state = ACTIVE;
     tasks[0].next_task_ready_queue = NULL;
     tasks[0].next_task_send_queue = NULL;
@@ -48,6 +50,8 @@ void schedule(void)
 
 void switch_to(TaskDescriptor_t *next)
 {
+    uart_printf(CONSOLE, "Current task tid: %d\r\n", current_task->tid);
+
     if (current_task == next) {
         return;
     }
@@ -55,7 +59,7 @@ void switch_to(TaskDescriptor_t *next)
     TaskDescriptor_t *prev = current_task;
     current_task = next;
 
-#ifndef DEBUG
+#ifdef DEBUG
     uart_printf(CONSOLE, "Switching to task with tid: %d\r\n", next->tid);
 #endif
 
