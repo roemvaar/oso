@@ -6,58 +6,59 @@
 #include "peripherals/uart.h"   // TODO(roemvaar): Delete this - don't print from here
 #include "mem.h"
 
-static TaskDescriptor_t tasks[MAX_TASKS];
-static TaskDescriptor_t *init_task;
-static TaskDescriptor_t *current_task;
-static Queue_t priority_queue;
-static int num_tasks;
+static struct task_struct init_task = INIT_TASK;
+struct task_struct *current = &(init_task);
+struct task_struct *task[NR_TASKS] = {&(init_task), };
+int num_tasks = 1;
+
+// Queue_t priority_queue;
 
 #define DEBUG
 
-void sched_init(void)
-{
-    num_tasks = 0;
+// void sched_init(void)
+// {
+//     // num_tasks = 0;
 
-    /* Initialize the queue */
-    priority_queue.front = NULL;
-    priority_queue.rear = NULL;
+//     /* Initialize the queue */
+//     // priority_queue.front = NULL;
+//     // priority_queue.rear = NULL;
 
-    /* `init_task` always has tid 1, we need to fill the task descriptor
-     * and add it to ready queue
-     */
-    tasks[0].tid = 1;
-    tasks[0].priority = 0;
-    tasks[0].parent = NULL;  /* init task has no parent, NULL is a placeholder to signal that */
-    tasks[0].state = ACTIVE;
-    tasks[0].next_task_ready_queue = NULL;
-    tasks[0].next_task_send_queue = NULL;
-    // TODO(roemvaar): code (routine) for init task is mising
-    // TODO(roemvaar): mem block allocation missing for init task
-    num_tasks++;
+//     /* `init_task` always has tid 1, we need to fill the task descriptor
+//      * and add it to ready queue
+//      */
+//     // task[0]->tid = 1;
+//     // task[0]->priority = 0;
+//     // task[0]->parent = NULL;  /* init task has no parent, NULL is a placeholder to signal that */
+//     // task[0]->state = READY;
+//     // task[0]->next_task_ready_queue = NULL;
+//     // task[0]->next_task_send_queue = NULL;
+//     // TODO(roemvaar): code (routine) for init task is mising
+//     // TODO(roemvaar): mem block allocation missing for init task
 
-    init_task = &tasks[0];
-    current_task = &tasks[0];
+//     // current = &task[0];
 
-    /* Add init_task to ready queue */
-    priority_queue.front = init_task;
-    priority_queue.rear = init_task;
-}
+//     /* Add init_task to ready queue */
+//     // priority_queue.front = &init_task;
+//     // priority_queue.rear = &init_task;
+
+//     return;
+// }
 
 void schedule(void)
 {
-    switch_to(&tasks[1]);
+    switch_to(task[1]);
 }
 
-void switch_to(TaskDescriptor_t *next)
+void switch_to(struct task_struct *next)
 {
-    uart_printf(CONSOLE, "Current task tid: %d\r\n", current_task->tid);
+    uart_printf(CONSOLE, "Current task tid: %d\r\n", current->tid);
 
-    if (current_task == next) {
+    if (current == next) {
         return;
     }
 
-    TaskDescriptor_t *prev = current_task;
-    current_task = next;
+    struct task_struct *prev = current;
+    current = next;
 
 #ifdef DEBUG
     uart_printf(CONSOLE, "Switching to task with tid: %d\r\n", next->tid);
@@ -81,9 +82,9 @@ void switch_to(TaskDescriptor_t *next)
 //     // }
 // }
 
-int get_current_task_tid(void)
+int sys_mytid(void)
 {
-    return current_task->tid;
+    return current->tid;
 }
 
 int get_num_tasks(void)
@@ -103,17 +104,25 @@ int get_new_tid(void)
  *      td - pointer to a free task decsriptor
  *      NULL - kernel is out of task descriptors
  */
-TaskDescriptor_t *get_free_task_descriptor(void)
+struct task_struct *get_free_task_descriptor(void)
 {
-    if (num_tasks >= MAX_TASKS) {
+    if (num_tasks >= NR_TASKS) {
         return NULL;
     }
 
     // TODO(roemvaar): select algorithm on how to manage the task descriptors - td[i].entry == NULL
-    TaskDescriptor_t *free_td = &tasks[num_tasks];
+    struct task_struct *free_td = task[num_tasks];
     num_tasks++;
 
     return free_td;
+}
+
+void print_task(void)
+{
+    uart_printf(CONSOLE, "tid \t| prio \r\n");
+    for(int i = 0; i < num_tasks; i++) {
+        uart_printf(CONSOLE, "%d \t| %d\r\n", task[i]->tid, task[i]->priority);
+    }
 }
 
 // int find_first_empty(struct task_descriptor td[])
@@ -132,40 +141,43 @@ TaskDescriptor_t *get_free_task_descriptor(void)
 // be one queue per priority or a single priority queue that orders it
 // from higher priority to lower priority, but that's something for later)
 // this is enqueue
-void add_to_ready_queue(TaskDescriptor_t *task)
-{
-    /* Add the task at the end of the queue and change the rear pointer */
-    Queue_t *q = &priority_queue;
+// void add_to_ready_queue(struct task_struct *task)
+//{
+    // /* Add the task at the end of the queue and change the rear pointer */
+    // Queue_t *q = &priority_queue;
 
-    /* Handle the case when the queue is empty */
-    if (q->rear == NULL) {
-        q->front = task;
-        q->rear = task;
-    } else {
-        q->rear->next_task_ready_queue = task;
-        q->rear = task;
-    }
+    // /* Handle the case when the queue is empty */
+    // if (q->rear == NULL) {
+    //     q->front = task;
+    //     q->rear = task;
+    // } else {
+    //     q->rear->next_task_ready_queue = task;
+    //     q->rear = task;
+    // }
 
-    task->next_task_ready_queue = NULL;
+    // task->next_task_ready_queue = NULL;
 
-    uart_printf(CONSOLE, "Task with tid: <%d> and priority: %d was added to its respective READY queue\r\n",
-                task->tid, task->priority);
-}
+    // uart_printf(CONSOLE, "Task with tid: <%d> and priority: %d was added to its respective READY queue\r\n",
+    //             task->tid, task->priority);
 
-void print_priority_queue(void)
-{
-    uart_printf(CONSOLE, "*****************************************\r\n");
+    //return;
+//}
 
-    TaskDescriptor_t *it = priority_queue.front;
+// void print_priority_queue(void)
+// {
+//     // uart_printf(CONSOLE, "*****************************************\r\n");
 
-    while (it != NULL) {
-        uart_printf(CONSOLE, "%d: %d --> ", it->tid, it->priority);
-        it = it->next_task_ready_queue;
-    }
+//     // struct task_struct *it = priority_queue.front;
 
-    uart_printf(CONSOLE, "NULL\r\n");
-    uart_printf(CONSOLE, "*****************************************\r\n");
-}
+//     // while (it != NULL) {
+//     //     uart_printf(CONSOLE, "%d: %d --> ", it->tid, it->priority);
+//     //     it = it->next_task_ready_queue;
+//     // }
+
+//     // uart_printf(CONSOLE, "NULL\r\n");
+//     // uart_printf(CONSOLE, "*****************************************\r\n");
+//     return;
+// }
 
 // Get the index of the next runnable task
 // int find_next_task(struct task_descriptor td[], size_t index)
@@ -179,9 +191,9 @@ void print_priority_queue(void)
 //     return -1;
 // }
 
-TaskDescriptor_t *get_current_task(void)
+struct task_struct *get_current_task(void)
 {
-    return current_task;
+    return current;
 }
 
 void stop_task(void)
@@ -192,5 +204,5 @@ void stop_task(void)
 // TODO(roemvaar): Resources owned by the task, primarily its memory and task descriptor, may be reclaimed.
 void delete_task(void)
 {
-    current_task->state = EXITED;
+    current->state = EXITED;
 }

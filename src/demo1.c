@@ -51,14 +51,14 @@ void first_user_task(void)
 
 void test_task(void)
 {
-    TaskDescriptor_t *curr = get_current_task();
-    TaskDescriptor_t *parent = curr->parent;
+    struct task_struct *current = get_current_task();
+    struct task_struct *parent = current->parent;
 
-    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", curr->tid, parent->tid);
+    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", current->tid, parent->tid);
 
     task_yield();
 
-    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", curr->tid, parent->tid);
+    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", current->tid, parent->tid);
 
     task_exit();
 }

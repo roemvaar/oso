@@ -4,7 +4,6 @@
 #include "sched.h"
 
 int task_create(int priority, EntryPoint_t code);
-int task_tid(void);
 int task_parent_tid(void);
 void task_yield(void);
 void task_exit(void);

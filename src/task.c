@@ -25,7 +25,7 @@ int task_create(int priority, EntryPoint_t code)
     }
 
     /* Get an empty slot on the task descriptor's array and fill the structure */
-    TaskDescriptor_t *new_task = get_free_task_descriptor();
+    struct task_struct *new_task = get_free_task_descriptor();
     if (new_task == NULL) {
         return -2;
     }
@@ -33,14 +33,14 @@ int task_create(int priority, EntryPoint_t code)
     new_task->tid = get_new_tid();
     new_task->priority = priority;
     new_task->parent = get_current_task();
-    new_task->state = ACTIVE;
+    new_task->state = READY;
     new_task->next_task_ready_queue = NULL;
     new_task->next_task_send_queue = NULL;
-    new_task->code = code;
-    new_task->mem = get_mem_by_tid(new_task->tid);
+    // new_task->code = code;
+    // new_task->mem = get_mem_by_tid(new_task->tid);
 
     /* Add new task into ready_queue */
-    add_to_ready_queue(new_task);
+    // add_to_ready_queue(new_task);
 
     return new_task->tid;
 }
@@ -52,11 +52,9 @@ int task_create(int priority, EntryPoint_t code)
  * return:
  *      tid - the task id of the task that is currently running
  */
-int task_tid(void)
+int MyTid(void)
 {
-    TaskDescriptor_t *current_task = get_current_task();
-
-    return current_task->tid;
+    return sys_mytid();
 }
 
 /* task_parent_tid
@@ -74,13 +72,13 @@ int task_parent_tid(void)
 {
     int parent_tid;
 
-    TaskDescriptor_t *current_task = get_current_task();
+    struct task_struct *current_task = get_current_task();
 
     // Check if the current task is the init_task
     if (current_task->tid == 0) {
         parent_tid = 0;
     } else {
-        TaskDescriptor_t *parent = current_task->parent;
+        struct task_struct *parent = current_task->parent;
 
         if (parent->state == EXITED) {
             parent_tid = -1;

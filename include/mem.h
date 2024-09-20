@@ -6,7 +6,7 @@
 #include "sched.h"
 
 #define MEM_BLOCK_SIZE 0x10000
-#define BLOCK_COUNT MAX_TASKS
+#define BLOCK_COUNT NR_TASKS
 
 // typedef struct mem_block {
 //     int address;
