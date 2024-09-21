@@ -33,7 +33,7 @@ void task3()
 {
     int tid = sys_mytid();
     uart_printf(CONSOLE, "current: %d\r\n", tid);
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 5; i++) {
         uart_printf(CONSOLE, "Task 3...\r\n");
     }
 }
@@ -98,8 +98,19 @@ int kmain(void)
     // }
 
     int ret = task_create(1, &task1);
-    ret = task_create(1, &task2);
-    ret = task_create(1, &task3);
+    if (ret < 0) {
+        uart_printf(CONSOLE, "[error] Couldn't create a new task: %d\r\n", ret);
+    }
+
+    ret = task_create(2, &task2);
+    if (ret < 0) {
+        uart_printf(CONSOLE, "[error] Couldn't create a new task: %d\r\n", ret);
+    }
+
+    ret = task_create(8, &task3);
+    if (ret < 0) {
+        uart_printf(CONSOLE, "[error] Couldn't create a new task: %d\r\n", ret);
+    }
 
 #ifdef DEBUG
     // print_priority_queue();

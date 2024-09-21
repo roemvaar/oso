@@ -1,7 +1,7 @@
 #ifndef SCHED_H_
 #define SCHED_H_
 
-#include "mem.h"
+#include "mm.h"
 
 /* Scheduling - first iteration:
  *
@@ -117,8 +117,8 @@ void switch_to(struct task_struct *next);
  * INIT_TASK
  */
 #define INIT_TASK \
-/* cpu_context */ { {0,0,0,0,0,0,0,0,0,0,0,0,0}, \
-/* state etc */	     1,0,1,NULL,NULL,NULL \
+/* cpu_context */ { {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, \
+/* state etc */      1, 0, 1, NULL, NULL, NULL \
 }
 
 /* DEBUG */

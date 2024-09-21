@@ -1,5 +1,5 @@
-#ifndef MEM_H_
-#define MEM_H_
+#ifndef MM_H_
+#define MM_H_
 
 #include <stddef.h>     // TODO(roemvaar): DELETE THIS, create types.h and don't use stdlib
 
@@ -26,4 +26,4 @@ void free_mem(MemBlock_t *block);
 void *memset(void *s, int c, size_t n);
 void *memcpy(void *restrict dest, const void *restrict src, size_t n);
 
-#endif  /* MEM_H_ */
+#endif  /* MM_H_ */

@@ -4,17 +4,43 @@
 
 #include "arm/utils.h"
 #include "peripherals/uart.h"   // TODO(roemvaar): Delete this - don't print from here
-#include "mem.h"
+#include "mm.h"
+
+// Pre-allocated task descriptor array (static memory)
+static struct task_struct task_structs[NR_TASKS];
 
 static struct task_struct init_task = INIT_TASK;
 struct task_struct *current = &(init_task);
-struct task_struct *task[NR_TASKS] = {&(init_task), };
-int num_tasks = 1;
 
-// Queue_t priority_queue;
+// Array of pointers to task_structs
+struct task_struct *task[NR_TASKS] = {&(init_task), };
+
+// Track how many tasks have been created
+int num_tasks = 1;
 
 #define DEBUG
 
+/* get_free_task_descriptor
+ *
+ * return:
+ *      td - pointer to a free task decsriptor
+ *      NULL - kernel is out of task descriptors
+ */
+struct task_struct *get_free_task_descriptor(void)
+{
+    for (int i = 0; i < NR_TASKS; i++) {
+        if (task[i] == NULL) {
+            task[i] = &task_structs[i];    // Use a pre-allocated task from the static pool
+            num_tasks++;
+            return task[i];
+        }
+    }
+
+    return NULL;    // No free task descriptor found
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // void sched_init(void)
 // {
 //     // num_tasks = 0;
@@ -92,104 +118,19 @@ int get_num_tasks(void)
     return num_tasks;
 }
 
-// TODO(roemvaar): algorithm to provide tid's
 int get_new_tid(void)
 {
     return num_tasks;
 }
 
-/* get_free_task_descriptor
- *
- * return:
- *      td - pointer to a free task decsriptor
- *      NULL - kernel is out of task descriptors
- */
-struct task_struct *get_free_task_descriptor(void)
-{
-    if (num_tasks >= NR_TASKS) {
-        return NULL;
-    }
-
-    // TODO(roemvaar): select algorithm on how to manage the task descriptors - td[i].entry == NULL
-    struct task_struct *free_td = task[num_tasks];
-    num_tasks++;
-
-    return free_td;
-}
-
 void print_task(void)
 {
-    uart_printf(CONSOLE, "tid \t| prio \r\n");
-    for(int i = 0; i < num_tasks; i++) {
-        uart_printf(CONSOLE, "%d \t| %d\r\n", task[i]->tid, task[i]->priority);
+    uart_printf(CONSOLE, "tid \t| prio \t| parent \r\n");
+    uart_printf(CONSOLE, "%d \t| %d \t| 0\r\n", task[0]->tid, task[0]->priority);   // init_task has a parent tid = 0
+    for (int i = 1; i < num_tasks; i++) {
+        uart_printf(CONSOLE, "%d \t| %d \t| %d\r\n", task[i]->tid, task[i]->priority, task[i]->parent->tid);
     }
 }
-
-// int find_first_empty(struct task_descriptor td[])
-// {
-//     for (int i = 0; i < MAX_TASKS_PER_PRIORITY; ++i) {
-//         if (td[i].entry == NULL) {
-//             return i;
-//         }
-// }
-
-//     return -1;
-// }
-
-// TODO(roemvaar): create one ready queue per priority
-// Initially, we will only use a single priority queue (there should
-// be one queue per priority or a single priority queue that orders it
-// from higher priority to lower priority, but that's something for later)
-// this is enqueue
-// void add_to_ready_queue(struct task_struct *task)
-//{
-    // /* Add the task at the end of the queue and change the rear pointer */
-    // Queue_t *q = &priority_queue;
-
-    // /* Handle the case when the queue is empty */
-    // if (q->rear == NULL) {
-    //     q->front = task;
-    //     q->rear = task;
-    // } else {
-    //     q->rear->next_task_ready_queue = task;
-    //     q->rear = task;
-    // }
-
-    // task->next_task_ready_queue = NULL;
-
-    // uart_printf(CONSOLE, "Task with tid: <%d> and priority: %d was added to its respective READY queue\r\n",
-    //             task->tid, task->priority);
-
-    //return;
-//}
-
-// void print_priority_queue(void)
-// {
-//     // uart_printf(CONSOLE, "*****************************************\r\n");
-
-//     // struct task_struct *it = priority_queue.front;
-
-//     // while (it != NULL) {
-//     //     uart_printf(CONSOLE, "%d: %d --> ", it->tid, it->priority);
-//     //     it = it->next_task_ready_queue;
-//     // }
-
-//     // uart_printf(CONSOLE, "NULL\r\n");
-//     // uart_printf(CONSOLE, "*****************************************\r\n");
-//     return;
-// }
-
-// Get the index of the next runnable task
-// int find_next_task(struct task_descriptor td[], size_t index)
-// {
-//     for (size_t i = index ; i != index; i = (i+1) % MAX_TASKS_PER_PRIORITY) {
-//         if (td[i].entry != NULL) {
-//             return i;
-//         }
-//     }
-
-//     return -1;
-// }
 
 struct task_struct *get_current_task(void)
 {

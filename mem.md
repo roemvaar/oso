@@ -72,3 +72,11 @@ Each process frame will contain:
             * stack pointer
             * frame pointer
     * Task
+
+
+## Memory
+
+OSo does not support dynamic memory allocation, it manages task
+descriptors using static memory. This means, a fixed-size pool of
+task descriptors is used, and `get_free_task_descriptor` function
+finds an available slot from that pool when a new task is created.

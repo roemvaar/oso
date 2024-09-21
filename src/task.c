@@ -1,6 +1,6 @@
 #include "task.h"
 
-#include "mem.h"
+#include "mm.h"
 #include "sched.h"
 
 /* task_create
@@ -25,9 +25,9 @@ int task_create(int priority, EntryPoint_t code)
     }
 
     /* Get an empty slot on the task descriptor's array and fill the structure */
-    struct task_struct *new_task = get_free_task_descriptor();
+    struct task_struct *new_task = (struct task_struct *) get_free_task_descriptor();
     if (new_task == NULL) {
-        return -2;
+        return -2;  // No available task descriptors
     }
 
     new_task->tid = get_new_tid();
