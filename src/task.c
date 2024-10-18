@@ -2,6 +2,7 @@
 
 #include "mm.h"
 #include "sched.h"
+#include "sys.h"
 
 /* task_create
  *
@@ -17,7 +18,7 @@
  *      -1  - invalid priority
  *      -2  - kernel is out of task descriptors
  */
-int task_create(int priority, EntryPoint_t code)
+int task_create(int priority, void (*task_code)(void))
 {
     /* Check that the priority is valid */
     if (priority < 0 || priority >= PRIORITY_LEVELS) {
@@ -30,13 +31,26 @@ int task_create(int priority, EntryPoint_t code)
         return -2;  // No available task descriptors
     }
 
+    /* Set the initial values for the CPU context of the task */
+    new_task->cpu_context.x19 = 0;
+    new_task->cpu_context.x20 = 0;
+    new_task->cpu_context.x21 = 0;
+    new_task->cpu_context.x22 = 0;
+    new_task->cpu_context.x23 = 0;
+    new_task->cpu_context.x24 = 0;
+    new_task->cpu_context.x25 = 0;
+    new_task->cpu_context.x26 = 0;
+    new_task->cpu_context.x27 = 0;
+    new_task->cpu_context.x28 = 0;
+    // new_task->cpu_context.sp = GET_STACK_FOR_THIS_INSTRUCTION;   // TODO
+    new_task->cpu_context.x19 = (unsigned long)task_code;
+
     new_task->tid = get_new_tid();
     new_task->priority = priority;
     new_task->parent = get_current_task();
     new_task->state = READY;
     new_task->next_task_ready_queue = NULL;
     new_task->next_task_send_queue = NULL;
-    // new_task->code = code;
     // new_task->mem = get_mem_by_tid(new_task->tid);
 
     /* Add new task into ready_queue */

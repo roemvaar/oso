@@ -8,13 +8,13 @@
 
 #define CLOCKHZ 1000000     // Free-running system timer, constant 1MHz rate
 
-#define TIMER_CS        (PERIPHERALS_BASE + 0x00003000)
-#define TIMER_CLO       (PERIPHERALS_BASE + 0x00003004)
-#define TIMER_CHI       (PERIPHERALS_BASE + 0x00003008)
-#define TIMER_C0        (PERIPHERALS_BASE + 0x0000300C)
-#define TIMER_C1        (PERIPHERALS_BASE + 0x00003010)
-#define TIMER_C2        (PERIPHERALS_BASE + 0x00003014)
-#define TIMER_C3        (PERIPHERALS_BASE + 0x00003018)
+#define TIMER_CS        (unsigned long)(PERIPHERALS_BASE + 0x00003000)
+#define TIMER_CLO       (unsigned long)(PERIPHERALS_BASE + 0x00003004)
+#define TIMER_CHI       (unsigned long)(PERIPHERALS_BASE + 0x00003008)
+#define TIMER_C0        (unsigned long)(PERIPHERALS_BASE + 0x0000300C)
+#define TIMER_C1        (unsigned long)(PERIPHERALS_BASE + 0x00003010)
+#define TIMER_C2        (unsigned long)(PERIPHERALS_BASE + 0x00003014)
+#define TIMER_C3        (unsigned long)(PERIPHERALS_BASE + 0x00003018)
 
 #define TIMER_CS_M0 (1 << 0)
 #define TIMER_CS_M1 (1 << 1)

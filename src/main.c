@@ -11,22 +11,28 @@
 
 void task1()
 {
-    int tid = sys_mytid();
-    uart_printf(CONSOLE, "current: %d\r\n", tid);
-    for (int i = 0; i < 5; i++) {
-        uart_printf(CONSOLE, "Task 1...\r\n");
+    while(1) {
+        int tid = sys_mytid();
+        uart_printf(CONSOLE, "current: %d\r\n", tid);
+        for (int i = 0; i < 5; i++) {
+            uart_printf(CONSOLE, "Task 1...\r\n");
+        }
     }
 }
 
-void task2(unsigned char *array)
+// void task2(unsigned char *array)
+void task2(void)
 {
-    int tid = sys_mytid();
-    uart_printf(CONSOLE, "current: %d\r\n", tid);
-    for (int i = 0; i < 5; i++) {
-        uart_putc(CONSOLE, array[i]);
+    while(1) {
+        int tid = sys_mytid();
+        uart_printf(CONSOLE, "current: %d\r\n", tid);
+        for (int i = 0; i < 5; i++) {
+            // uart_putc(CONSOLE, array[i]);
+            uart_putc(CONSOLE, i);
+        }
+        uart_putc(CONSOLE, '\r');
+        uart_putc(CONSOLE, '\n');
     }
-    uart_putc(CONSOLE, '\r');
-    uart_putc(CONSOLE, '\n');
 }
 
 void task3()
@@ -111,6 +117,8 @@ int kmain(void)
     if (ret < 0) {
         uart_printf(CONSOLE, "[error] Couldn't create a new task: %d\r\n", ret);
     }
+
+    schedule();
 
 #ifdef DEBUG
     // print_priority_queue();

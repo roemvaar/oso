@@ -95,6 +95,17 @@ void switch_to(struct task_struct *next)
     cpu_switch_to(prev, next);
 }
 
+// void cpu_switch_to_in_c(struct task_struct *prev, struct task_struct *next)
+// {
+//     /* Save registers from `prev` task */
+//     save_sp(prev->cpu_context.sp);
+//     save_pc(prev->cpu_context.pc);
+
+//     /* Load registers from `next` task */
+//     load_sp(next->cpu_context.sp);
+//     load_pc(next->cpu_context.pc);
+// }
+
 // void switch_to_new_task(void)
 // {
 //     // task_descriptor queues[PRIORITY_LEVELS][16];

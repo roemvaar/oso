@@ -4,7 +4,7 @@
 
 // static MemBlock_t stacks[BLOCK_COUNT];
 
-static unsigned short mem_map[BLOCK_COUNT];
+// static unsigned short mem_map[BLOCK_COUNT];
 
 // void mem_init(void)
 // {

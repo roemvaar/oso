@@ -27,7 +27,6 @@ extern struct task_struct *current;
 extern int num_tasks;
 
 typedef struct mem_block MemBlock_t;
-typedef void (*EntryPoint_t)(void);
 
 /* TaskState_t
  *
@@ -90,7 +89,6 @@ struct task_struct
     struct task_struct *parent;    /* A pointer to the TaskDescriptor of the task that created it, its parent */
     struct task_struct *next_task_ready_queue;  /* Pointer to TaskDescriptor of the next ready task (schedule) */
     struct task_struct *next_task_send_queue;   /* Pointer to TaskDescriptor of the next ready task (send queue) */
-    // EntryPoint_t code;              /* Pointer to the instruction memory for this task */
     // MemBlock_t *mem;
 };
 
