@@ -1,5 +1,6 @@
 #include "task.h"
 
+#include "arm/utils.h"
 #include "mm.h"
 #include "sched.h"
 #include "sys.h"
@@ -26,13 +27,15 @@ int task_create(int priority, void (*task_code)(void))
     }
 
     /* Get an empty slot on the task descriptor's array and fill the structure */
-    struct task_struct *new_task = (struct task_struct *) get_free_task_descriptor();
+    struct task_struct *new_task = (struct task_struct *)get_free_task_descriptor();
     if (new_task == NULL) {
-        return -2;  // No available task descriptors
+        return -2;      /* No available task descriptors */
     }
 
     /* Set the initial values for the CPU context of the task */
-    new_task->cpu_context.x19 = 0;
+    new_task->tid = get_new_tid();
+
+    new_task->cpu_context.x19 = (unsigned long)task_code;
     new_task->cpu_context.x20 = 0;
     new_task->cpu_context.x21 = 0;
     new_task->cpu_context.x22 = 0;
@@ -42,10 +45,10 @@ int task_create(int priority, void (*task_code)(void))
     new_task->cpu_context.x26 = 0;
     new_task->cpu_context.x27 = 0;
     new_task->cpu_context.x28 = 0;
-    // new_task->cpu_context.sp = GET_STACK_FOR_THIS_INSTRUCTION;   // TODO
-    new_task->cpu_context.x19 = (unsigned long)task_code;
+    new_task->cpu_context.sp = (unsigned long)allocate_stack(new_task->tid);
+    new_task->cpu_context.fp = new_task->cpu_context.sp;
+    new_task->cpu_context.pc = (unsigned long)ret_from_fork;
 
-    new_task->tid = get_new_tid();
     new_task->priority = priority;
     new_task->parent = get_current_task();
     new_task->state = READY;

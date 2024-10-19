@@ -20,6 +20,27 @@ int num_tasks = 1;
 
 #define DEBUG
 
+/////////////////////////////////////////////////////////
+#define STACK_SIZE 1024
+#define MAX_TASKS 10
+
+char stacks[MAX_TASKS][STACK_SIZE];
+int stack_top[MAX_TASKS] = {0};
+
+void *allocate_stack(int tid)
+{
+    /* Ensure that the task ID is within the valid range */
+    if (tid < 0 || tid >= MAX_TASKS) {
+        return NULL;    /* Invalid task ID */
+    }
+
+    /* Get the base address of the stack for the given task.
+     * Stack grows downward, so we return the top of the stack
+     */
+    return (void *)(stacks[tid] + STACK_SIZE);
+}
+/////////////////////////////////////////////////////////
+
 /* get_free_task_descriptor
  *
  * return:
@@ -72,7 +93,7 @@ struct task_struct *get_free_task_descriptor(void)
 
 void schedule(void)
 {
-    switch_to(task[1]);
+    switch_to(task[1]);     // For testing, manually switch to task[1]
 }
 
 void switch_to(struct task_struct *next)
@@ -80,7 +101,7 @@ void switch_to(struct task_struct *next)
     uart_printf(CONSOLE, "Current task tid: %d\r\n", current->tid);
 
     if (current == next) {
-        return;
+        return;     /* No need to switch if it's the same task */
     }
 
     struct task_struct *prev = current;
@@ -90,8 +111,7 @@ void switch_to(struct task_struct *next)
     uart_printf(CONSOLE, "Switching to task with tid: %d\r\n", next->tid);
 #endif
 
-    /* TODO(roemvaar): Context switch mechanism is not working */
-    /* Context switch code */
+    /* Perform the context switch */
     cpu_switch_to(prev, next);
 }
 

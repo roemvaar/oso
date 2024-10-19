@@ -28,6 +28,13 @@ extern int num_tasks;
 
 typedef struct mem_block MemBlock_t;
 
+//////////////////////////////////////////////////////////////////////////
+
+
+void *allocate_stack(int tid);
+
+//////////////////////////////////////////////////////////////////////////
+
 /* TaskState_t
  *
  * A task is in one of the following run states:
@@ -73,9 +80,9 @@ struct cpu_context
     unsigned long x26;
     unsigned long x27;
     unsigned long x28;
-    unsigned long fp;
-    unsigned long sp;
-    unsigned long pc;
+    unsigned long fp;       // Frame Pointer (FP x29)
+    unsigned long sp;       // Stack Pointer (SP)
+    unsigned long pc;       
 };
 
 /* struct task_struct
@@ -89,7 +96,6 @@ struct task_struct
     struct task_struct *parent;    /* A pointer to the TaskDescriptor of the task that created it, its parent */
     struct task_struct *next_task_ready_queue;  /* Pointer to TaskDescriptor of the next ready task (schedule) */
     struct task_struct *next_task_send_queue;   /* Pointer to TaskDescriptor of the next ready task (send queue) */
-    // MemBlock_t *mem;
 };
 
 /* Queue_t

@@ -20,7 +20,6 @@ void task1()
     }
 }
 
-// void task2(unsigned char *array)
 void task2(void)
 {
     while(1) {
@@ -37,10 +36,12 @@ void task2(void)
 
 void task3()
 {
-    int tid = sys_mytid();
-    uart_printf(CONSOLE, "current: %d\r\n", tid);
-    for (int i = 0; i < 5; i++) {
-        uart_printf(CONSOLE, "Task 3...\r\n");
+    while(1) {
+        int tid = sys_mytid();
+        uart_printf(CONSOLE, "current: %d\r\n", tid);
+        for (int i = 0; i < 5; i++) {
+            uart_printf(CONSOLE, "Task 3...\r\n");
+        }
     }
 }
 
