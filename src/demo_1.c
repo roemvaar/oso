@@ -1,7 +1,8 @@
-#include "user/demo1.h"
+#include "demos/demo_1.h"
 
-#include "peripherals/uart.h"
 #include "arm/utils.h"
+#include "peripherals/uart.h"
+#include "sys.h"
 #include "task.h"
 
 void first_user_task(void)
@@ -25,12 +26,14 @@ void first_user_task(void)
         uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
         return;
     }
+    uart_printf(CONSOLE, "Created: <%d>\r\n", ret);
 
     ret = task_create(4, &test_task);
     if (ret < 0) {
         uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
         return;
     }
+    uart_printf(CONSOLE, "Created: <%d>\r\n", ret);
 
     /* Two higher priority tasks */
     ret = task_create(1, &test_task);
@@ -38,14 +41,17 @@ void first_user_task(void)
         uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
         return;
     }
+    uart_printf(CONSOLE, "Created: <%d>\r\n", ret);
 
     ret = task_create(1, &test_task);
     if (ret < 0) {
         uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
         return;
     }
+    uart_printf(CONSOLE, "Created: <%d>\r\n", ret);
 
     uart_printf(CONSOLE, "FirstUserTask: exiting...\r\n");
+    delay(100000000);    /* This is ~ten seconds */
     task_exit();
 }
 
@@ -94,3 +100,28 @@ void display_ascii_art(void)
     uart_printf(CONSOLE, "  oo    oo 'oo      oo ' oo    oo 'oo 0000---oo\\_\n");
     uart_printf(CONSOLE, " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
+
+void task1(void)
+{
+    while (1) {
+        int tid = sys_mytid();
+        uart_printf(CONSOLE, "current: %d\r\n", tid);
+        for (int i = 0; i < 5; i++) {
+            uart_printf(CONSOLE, "Task 1: %d\r\n", i);
+            if (i == 2) {
+                switch_to(task[2]);
+            }
+        }
+        delay(50000000);    /* This is ~five seconds */
+    }
+}
+
+void task_example(void)
+{
+    int tid = sys_mytid();
+    uart_printf(CONSOLE, "current: %d\r\n", tid);
+
+    delay(50000000);
+    schedule();
+}
+

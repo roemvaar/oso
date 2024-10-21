@@ -82,7 +82,7 @@ struct cpu_context
     unsigned long x28;
     unsigned long fp;       // Frame Pointer (FP x29)
     unsigned long sp;       // Stack Pointer (SP)
-    unsigned long pc;       
+    unsigned long pc;
 };
 
 /* struct task_struct
@@ -106,7 +106,7 @@ typedef struct _queue
     struct task_struct *rear;
 } Queue_t;
 
-// void sched_init(void);
+void sched_init(void);
 void schedule(void);
 int get_num_tasks(void);
 int get_new_tid(void);

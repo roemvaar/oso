@@ -1,49 +1,13 @@
 #include "arm/utils.h"
+#include "demos/demo_1.h"
 #include "peripherals/irq.h"
 #include "peripherals/timer.h"
 #include "peripherals/uart.h"
 #include "sched.h"
 #include "task.h"
-#include "user/demo1.h"
 #include "sys.h"
 
 #define DEBUG
-
-void task1()
-{
-    while(1) {
-        int tid = sys_mytid();
-        uart_printf(CONSOLE, "current: %d\r\n", tid);
-        for (int i = 0; i < 5; i++) {
-            uart_printf(CONSOLE, "Task 1...\r\n");
-        }
-    }
-}
-
-void task2(void)
-{
-    while(1) {
-        int tid = sys_mytid();
-        uart_printf(CONSOLE, "current: %d\r\n", tid);
-        for (int i = 0; i < 5; i++) {
-            // uart_putc(CONSOLE, array[i]);
-            uart_putc(CONSOLE, i);
-        }
-        uart_putc(CONSOLE, '\r');
-        uart_putc(CONSOLE, '\n');
-    }
-}
-
-void task3()
-{
-    while(1) {
-        int tid = sys_mytid();
-        uart_printf(CONSOLE, "current: %d\r\n", tid);
-        for (int i = 0; i < 5; i++) {
-            uart_printf(CONSOLE, "Task 3...\r\n");
-        }
-    }
-}
 
 /* start_kernel
  *
@@ -86,7 +50,7 @@ void start_kernel(void)
     /* Set up the scheduler prior starting any interrupts
      * (such as the system timer interrupt). 
      */
-    // sched_init();
+    sched_init();
     uart_printf(CONSOLE, "init: Scheduler init completed...\r\n");
 }
 
@@ -95,72 +59,43 @@ int kmain(void)
     start_kernel();
 
     uart_printf(CONSOLE, "*****************************************\r\n");
-    uart_printf(CONSOLE, "RTOS by roemvaar (May, 2024).\r\n");
+    uart_printf(CONSOLE, "OSo - RTOS by roemvaar (Oct, 2024).\r\n");
 
-    // /* Kernel 1 Assignment */
-    // int ret = task_create(2, &first_user_task);
-    // if (ret < 0) {
-    //     uart_printf(CONSOLE, "Error creating first user task: %d\r\n", ret);
-    //     return ret;
-    // }
-
-    int ret = task_create(1, &task1);
+    /* Kernel 1 Assignment */
+    int ret = task_create(1, &first_user_task);
     if (ret < 0) {
-        uart_printf(CONSOLE, "[error] Couldn't create a new task: %d\r\n", ret);
+        uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
     }
-
-    ret = task_create(2, &task2);
-    if (ret < 0) {
-        uart_printf(CONSOLE, "[error] Couldn't create a new task: %d\r\n", ret);
-    }
-
-    ret = task_create(8, &task3);
-    if (ret < 0) {
-        uart_printf(CONSOLE, "[error] Couldn't create a new task: %d\r\n", ret);
-    }
+    uart_printf(CONSOLE, "Created: <%d>\r\n", ret);
 
     schedule();
 
 #ifdef DEBUG
     // print_priority_queue();
-    int tid = sys_mytid();
-    uart_printf(CONSOLE, "current: %d\r\n", tid);
-    print_task();
+    // int tid = sys_mytid();
+    // uart_printf(CONSOLE, "current: %d\r\n", tid);
+    // print_task();
 #endif
-
-    // Polling
-    // while(1) {
-    //     task1();
-    //     delay(10000000);    // This is ~one second
-    //     task2("ABCDE");
-    //     delay(10000000);
-    //     task3();
-    //     delay(10000000);
-    //     task2("12345");
-    //     delay(50000000);    // This is ~five seconds
-    // }
 
     // while (1) {
     //     schedule();
     // }
 
-    // schedule();
+    // char input;
+    // uint32_t count;
 
-    char input;
-    uint32_t count;
+    // while (1) {
+    //     input = uart_getc(CONSOLE);
 
-    while (1) {
-        input = uart_getc(CONSOLE);
-
-        if (input == '$') {
-            count = sys_timer_get_count();
-            uart_printf(CONSOLE, "Timer count: %u\r\n", count);
-        } else if (input == '\n' || input == '\r') {
-            uart_printf(CONSOLE, "\r\n");
-        } else {
-            uart_putc(CONSOLE, input);
-        }
-    }
+    //     if (input == '$') {
+    //         count = sys_timer_get_count();
+    //         uart_printf(CONSOLE, "Timer count: %u\r\n", count);
+    //     } else if (input == '\n' || input == '\r') {
+    //         uart_printf(CONSOLE, "\r\n");
+    //     } else {
+    //         uart_putc(CONSOLE, input);
+    //     }
+    // }
 
     return 0;
 }

@@ -5,6 +5,7 @@
 #include "arm/utils.h"
 #include "peripherals/uart.h"   // TODO(roemvaar): Delete this - don't print from here
 #include "mm.h"
+#include "task.h"
 
 // Pre-allocated task descriptor array (static memory)
 static struct task_struct task_structs[NR_TASKS];
@@ -18,11 +19,14 @@ struct task_struct *task[NR_TASKS] = {&(init_task), };
 // Track how many tasks have been created
 int num_tasks = 1;
 
+// Pointer to the idle task
+struct task_struct *idle_task;
+
 #define DEBUG
 
 /////////////////////////////////////////////////////////
 #define STACK_SIZE 1024
-#define MAX_TASKS 10
+#define MAX_TASKS 100
 
 char stacks[MAX_TASKS][STACK_SIZE];
 int stack_top[MAX_TASKS] = {0};
@@ -60,40 +64,69 @@ struct task_struct *get_free_task_descriptor(void)
     return NULL;    // No free task descriptor found
 }
 
+void idle(void)
+{
+    while (1) {
+        uart_printf(CONSOLE, "[idle]");
+        delay(1000000);    /* This is ~ten seconds */
+        schedule();
+    }
+}
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// void sched_init(void)
-// {
-//     // num_tasks = 0;
+void sched_init(void)
+{
+    /* Create the idle task */
+    int idle_tid = MAX_TASKS - 1;
+    task[idle_tid] = &task_structs[idle_tid];
+    idle_task = task[idle_tid];
 
-//     /* Initialize the queue */
-//     // priority_queue.front = NULL;
-//     // priority_queue.rear = NULL;
+    /* Initialize the idle task properties */
+    idle_task->tid = idle_tid;
+    idle_task->priority = PRIORITY_LEVELS - 1;
+    idle_task->state = READY;
+    idle_task->parent = 0;
 
-//     /* `init_task` always has tid 1, we need to fill the task descriptor
-//      * and add it to ready queue
-//      */
-//     // task[0]->tid = 1;
-//     // task[0]->priority = 0;
-//     // task[0]->parent = NULL;  /* init task has no parent, NULL is a placeholder to signal that */
-//     // task[0]->state = READY;
-//     // task[0]->next_task_ready_queue = NULL;
-//     // task[0]->next_task_send_queue = NULL;
-//     // TODO(roemvaar): code (routine) for init task is mising
-//     // TODO(roemvaar): mem block allocation missing for init task
+    /* Setup the CPU context for the idle task */
+    idle_task->cpu_context.x19 = (unsigned long)&idle;
+    idle_task->cpu_context.x20 = 0;
+    idle_task->cpu_context.x21 = 0;
+    idle_task->cpu_context.x22 = 0;
+    idle_task->cpu_context.x23 = 0;
+    idle_task->cpu_context.x24 = 0;
+    idle_task->cpu_context.x25 = 0;
+    idle_task->cpu_context.x26 = 0;
+    idle_task->cpu_context.x27 = 0;
+    idle_task->cpu_context.x28 = 0;
 
-//     // current = &task[0];
+    /* Allocate stack for the idle task */
+    idle_task->cpu_context.sp = (unsigned long)allocate_stack(idle_task->tid);
+    idle_task->cpu_context.fp = idle_task->cpu_context.sp;
+    idle_task->cpu_context.pc = (unsigned long)ret_from_fork;
 
-//     /* Add init_task to ready queue */
-//     // priority_queue.front = &init_task;
-//     // priority_queue.rear = &init_task;
-
-//     return;
-// }
+    uart_printf(CONSOLE, "sched: Idle task created with tid: %d\r\n", idle_tid);
+}
 
 void schedule(void)
 {
-    switch_to(task[1]);     // For testing, manually switch to task[1]
+    struct task_struct *next_task = NULL;
+
+    /* Find the next runnable task */
+    /* Find the highest-priority READY task */
+    int highest_priority = PRIORITY_LEVELS - 1;     /* Assuming lower number is higher priority */
+    for (int i = 1; i < num_tasks; i++) {
+        if (task[i] != NULL && task[i]->state == READY && task[i]->priority < highest_priority) {
+            next_task = task[i];
+            highest_priority = task[i]->priority;
+        }
+    }
+
+    if (next_task == NULL) {
+        uart_printf(CONSOLE, "[sched]: No task to run, switching to idle task\r\n");
+        switch_to(idle_task);
+    } else {
+        /* No runnable task found, switch to the idle task */
+        switch_to(next_task);     /* task[0] is the idle task */
+    }
 }
 
 void switch_to(struct task_struct *next)
@@ -112,32 +145,13 @@ void switch_to(struct task_struct *next)
 #endif
 
     /* Perform the context switch */
-    cpu_switch_to(prev, next);
+    if (next->state == READY) {
+        cpu_switch_to(prev, next);
+    } else {
+        // cpu_switch_to(prev, idle);
+        uart_printf(CONSOLE, "[sched]: Task with tid %d is not READY!\r\n", next->tid);
+    }
 }
-
-// void cpu_switch_to_in_c(struct task_struct *prev, struct task_struct *next)
-// {
-//     /* Save registers from `prev` task */
-//     save_sp(prev->cpu_context.sp);
-//     save_pc(prev->cpu_context.pc);
-
-//     /* Load registers from `next` task */
-//     load_sp(next->cpu_context.sp);
-//     load_pc(next->cpu_context.pc);
-// }
-
-// void switch_to_new_task(void)
-// {
-//     // task_descriptor queues[PRIORITY_LEVELS][16];
-
-//     // for (size_t i = 0; i < PRIORITY_LEVELS; ++i) {
-//     //     size_t index = find_next_task(queues[i], curr_task_index);
-//     //     if (index != -1) {
-//     //         curr_task_index = i;
-//     //         curr_task = &(queues[i][index]);
-//     //     }
-//     // }
-// }
 
 int sys_mytid(void)
 {
@@ -176,5 +190,7 @@ void stop_task(void)
 // TODO(roemvaar): Resources owned by the task, primarily its memory and task descriptor, may be reclaimed.
 void delete_task(void)
 {
+    /* TODO(roemvar): this is only for testing */
     current->state = EXITED;
+    schedule();
 }

@@ -25,7 +25,7 @@ Within a particular ecosystem, there may be a common way of installing things, s
 
 ## Design Goals
 
-Small operating system with a "real-world" application.
+Small operating system with for "real-world" applications.
 
 Start from scratch to get a better understanding of things that you may
 take for granted, such as booting, device interaction, memory management,
