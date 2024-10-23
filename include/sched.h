@@ -3,37 +3,17 @@
 
 #include "mm.h"
 
-/* Scheduling - first iteration:
- *
- * After kernel startup `start_kernel` there is only one task running `init_task`
- * Only one priority (0) is supported.
- * The maximum number of tasks (max_num_tasks) will be one hundred.
- * A fixed array of task descriptors, size of max_num_tasks.
- * A fized array of process stacks. Each process will have an array.
- * Use round robin algorithm (FIFO).
- * Time slicing.
- */
-
-// #define MAX_TASKS_PER_PRIORITY 10
-// #define MAX_TASKS (PRIORITY_LEVELS * MAX_TASKS_PER_PRIORITY)
 #define PRIORITY_LEVELS 5
-#define NR_TASKS 64
+#define MAX_TASKS 64
 
 #define FIRST_TASK task[0]
-#define LAST_TASK task[NR_TASKS-1]
+#define LAST_TASK task[MAX_TASKS-1]
 
-extern struct task_struct *task[NR_TASKS];
+#define STACK_SIZE 1024
+
+extern struct task_struct *task[MAX_TASKS];
 extern struct task_struct *current;
 extern int num_tasks;
-
-typedef struct mem_block MemBlock_t;
-
-//////////////////////////////////////////////////////////////////////////
-
-
-void *allocate_stack(int tid);
-
-//////////////////////////////////////////////////////////////////////////
 
 /* TaskState_t
  *
@@ -98,24 +78,6 @@ struct task_struct
     struct task_struct *next_task_send_queue;   /* Pointer to TaskDescriptor of the next ready task (send queue) */
 };
 
-/* Queue_t
- */
-typedef struct _queue
-{
-    struct task_struct *front;
-    struct task_struct *rear;
-} Queue_t;
-
-void sched_init(void);
-void schedule(void);
-int get_num_tasks(void);
-int get_new_tid(void);
-struct task_struct *get_free_task_descriptor(void);
-// void add_to_ready_queue(struct task_struct *task);
-struct task_struct *get_current_task(void);
-void stop_task(void);
-void delete_task(void);
-void switch_to(struct task_struct *next);
 
 /*
  * INIT_TASK
@@ -125,8 +87,18 @@ void switch_to(struct task_struct *next);
 /* state etc */      1, 0, 1, NULL, NULL, NULL \
 }
 
-/* DEBUG */
-// void print_priority_queue(void);
+void sched_init(void);
+void schedule(void);
+int get_num_tasks(void);
+int get_new_tid(void);
+struct task_struct *get_free_task_descriptor(void);
+struct task_struct *get_current_task(void);
+void stop_task(void);
+void delete_task(void);
+void switch_to(struct task_struct *next);
+void *allocate_stack(int tid);
+
+/* For debugging */
 void print_task(void);
 
 #endif  /* SCHED_H_ */

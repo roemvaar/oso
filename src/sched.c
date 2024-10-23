@@ -3,30 +3,26 @@
 #include <stddef.h>     // TODO(roemvaar): DELETE THIS - don't use stdlib
 
 #include "arm/utils.h"
-#include "peripherals/uart.h"   // TODO(roemvaar): Delete this - don't print from here
+#include "peripherals/uart.h"
 #include "mm.h"
 #include "task.h"
 
-// Pre-allocated task descriptor array (static memory)
-static struct task_struct task_structs[NR_TASKS];
+/* Pre-allocated task descriptor array (static memory) */
+static struct task_struct task_structs[MAX_TASKS];
 
 static struct task_struct init_task = INIT_TASK;
 struct task_struct *current = &(init_task);
 
-// Array of pointers to task_structs
-struct task_struct *task[NR_TASKS] = {&(init_task), };
+/* Array of pointers to task_structs */
+struct task_struct *task[MAX_TASKS] = {&(init_task), };
 
-// Track how many tasks have been created
+/* Track how many tasks have been created */
 int num_tasks = 1;
 
-// Pointer to the idle task
+/* Pointer to the idle task */
 struct task_struct *idle_task;
 
 #define DEBUG
-
-/////////////////////////////////////////////////////////
-#define STACK_SIZE 1024
-#define MAX_TASKS 100
 
 char stacks[MAX_TASKS][STACK_SIZE];
 int stack_top[MAX_TASKS] = {0};
@@ -43,7 +39,6 @@ void *allocate_stack(int tid)
      */
     return (void *)(stacks[tid] + STACK_SIZE);
 }
-/////////////////////////////////////////////////////////
 
 /* get_free_task_descriptor
  *
@@ -53,15 +48,16 @@ void *allocate_stack(int tid)
  */
 struct task_struct *get_free_task_descriptor(void)
 {
-    for (int i = 0; i < NR_TASKS; i++) {
+    for (int i = 0; i < MAX_TASKS; i++) {
         if (task[i] == NULL) {
-            task[i] = &task_structs[i];    // Use a pre-allocated task from the static pool
+            task[i] = &task_structs[i];    /* Use a pre-allocated task from the static pool */
             num_tasks++;
             return task[i];
         }
     }
 
-    return NULL;    // No free task descriptor found
+    /* No free task descriptor found */
+    return NULL;
 }
 
 void idle(void)
@@ -121,18 +117,16 @@ void schedule(void)
     }
 
     if (next_task == NULL) {
-        uart_printf(CONSOLE, "[sched]: No task to run, switching to idle task\r\n");
-        switch_to(idle_task);
-    } else {
         /* No runnable task found, switch to the idle task */
-        switch_to(next_task);     /* task[0] is the idle task */
+        uart_printf(CONSOLE, "[sched]: No task to run, switching to idle task\r\n");
+        switch_to(idle_task);       /* task[0] is the idle task */
+    } else {
+        switch_to(next_task);
     }
 }
 
 void switch_to(struct task_struct *next)
 {
-    uart_printf(CONSOLE, "Current task tid: %d\r\n", current->tid);
-
     if (current == next) {
         return;     /* No need to switch if it's the same task */
     }
@@ -141,16 +135,12 @@ void switch_to(struct task_struct *next)
     current = next;
 
 #ifdef DEBUG
-    uart_printf(CONSOLE, "Switching to task with tid: %d\r\n", next->tid);
+    uart_printf(CONSOLE, "Current task tid: %d\r\n", current->tid);
+    uart_printf(CONSOLE, "Switching to task tid: %d\r\n", next->tid);
 #endif
 
     /* Perform the context switch */
-    if (next->state == READY) {
-        cpu_switch_to(prev, next);
-    } else {
-        // cpu_switch_to(prev, idle);
-        uart_printf(CONSOLE, "[sched]: Task with tid %d is not READY!\r\n", next->tid);
-    }
+    cpu_switch_to(prev, next);
 }
 
 int sys_mytid(void)

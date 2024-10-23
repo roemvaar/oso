@@ -54,7 +54,6 @@ int task_create(int priority, void (*task_code)(void))
     new_task->state = READY;
     new_task->next_task_ready_queue = NULL;
     new_task->next_task_send_queue = NULL;
-    // new_task->mem = get_mem_by_tid(new_task->tid);
 
     /* Add new task into ready_queue */
     // add_to_ready_queue(new_task);

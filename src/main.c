@@ -71,30 +71,13 @@ int kmain(void)
     schedule();
 
 #ifdef DEBUG
-    // print_priority_queue();
-    // int tid = sys_mytid();
-    // uart_printf(CONSOLE, "current: %d\r\n", tid);
-    // print_task();
+    int tid = sys_mytid();
+    uart_printf(CONSOLE, "current: %d\r\n", tid);
+    print_task();
 #endif
 
     // while (1) {
     //     schedule();
-    // }
-
-    // char input;
-    // uint32_t count;
-
-    // while (1) {
-    //     input = uart_getc(CONSOLE);
-
-    //     if (input == '$') {
-    //         count = sys_timer_get_count();
-    //         uart_printf(CONSOLE, "Timer count: %u\r\n", count);
-    //     } else if (input == '\n' || input == '\r') {
-    //         uart_printf(CONSOLE, "\r\n");
-    //     } else {
-    //         uart_putc(CONSOLE, input);
-    //     }
     // }
 
     return 0;

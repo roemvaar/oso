@@ -8,5 +8,6 @@ void hello_name(char *array);
 void display_ascii_art(void);
 void task1(void);
 void task_example(void);
+void console(void);
 
 #endif  /* DEMOS_DEMO_1_H_ */

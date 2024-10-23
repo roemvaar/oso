@@ -2,6 +2,7 @@
 
 #include "arm/utils.h"
 #include "peripherals/uart.h"
+#include "peripherals/timer.h"
 #include "sys.h"
 #include "task.h"
 
@@ -125,3 +126,21 @@ void task_example(void)
     schedule();
 }
 
+void console(void)
+{
+    char input;
+    uint32_t count;
+
+    while (1) {
+        input = uart_getc(CONSOLE);
+
+        if (input == '$') {
+            count = sys_timer_get_count();
+            uart_printf(CONSOLE, "Timer count: %u\r\n", count);
+        } else if (input == '\n' || input == '\r') {
+            uart_printf(CONSOLE, "\r\n");
+        } else {
+            uart_putc(CONSOLE, input);
+        }
+    }
+}
