@@ -4,6 +4,8 @@
 #include "mm.h"
 
 #define PRIORITY_LEVELS 5
+#define MAX_PRIORITY 0
+#define MIN_PRIORITY (PRIORITY_LEVELS - 1)
 #define MAX_TASKS 64
 
 #define FIRST_TASK task[0]
@@ -74,10 +76,17 @@ struct task_struct
     long priority;                   /* The task's priority */
     TaskState_t state;              /* The task's current run state */
     struct task_struct *parent;    /* A pointer to the TaskDescriptor of the task that created it, its parent */
-    struct task_struct *next_task_ready_queue;  /* Pointer to TaskDescriptor of the next ready task (schedule) */
+    struct task_struct *next_ready_task;  /* Pointer to TaskDescriptor of the next ready task (schedule) */
     struct task_struct *next_task_send_queue;   /* Pointer to TaskDescriptor of the next ready task (send queue) */
 };
 
+/* struct priority_queue
+ */
+struct priority_queue
+{
+    struct task_struct *head;
+    struct task_struct *tail;
+};
 
 /*
  * INIT_TASK
@@ -97,6 +106,9 @@ void stop_task(void);
 void delete_task(void);
 void switch_to(struct task_struct *next);
 void *allocate_stack(int tid);
+
+int task_enqueue(struct task_struct *task);
+// task_dequeue
 
 /* For debugging */
 void print_task(void);

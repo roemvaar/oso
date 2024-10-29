@@ -52,11 +52,11 @@ int task_create(int priority, void (*task_code)(void))
     new_task->priority = priority;
     new_task->parent = get_current_task();
     new_task->state = READY;
-    new_task->next_task_ready_queue = NULL;
+    new_task->next_ready_task = NULL;
     new_task->next_task_send_queue = NULL;
 
     /* Add new task into ready_queue */
-    // add_to_ready_queue(new_task);
+    task_enqueue(new_task);
 
     return new_task->tid;
 }

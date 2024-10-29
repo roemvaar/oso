@@ -39,6 +39,10 @@ void start_kernel(void)
     irq_enable();
     uart_printf(CONSOLE, "init: IRQ enable init completed...\r\n");
 
+    /* Set up the scheduler. */
+    sched_init();
+    uart_printf(CONSOLE, "init: Scheduler init completed...\r\n");
+
 #ifdef DEBUG
     /* Print current execution level, OSo should run on EL1, and user applications
        should run on EL0.
@@ -46,12 +50,6 @@ void start_kernel(void)
     int el = get_el();
     uart_printf(CONSOLE, "init: Exception level: EL%d...\r\n", el);
 #endif
-
-    /* Set up the scheduler prior starting any interrupts
-     * (such as the system timer interrupt). 
-     */
-    sched_init();
-    uart_printf(CONSOLE, "init: Scheduler init completed...\r\n");
 }
 
 int kmain(void)
@@ -59,26 +57,23 @@ int kmain(void)
     start_kernel();
 
     uart_printf(CONSOLE, "*****************************************\r\n");
-    uart_printf(CONSOLE, "OSo - RTOS by roemvaar (Oct, 2024).\r\n");
+    uart_printf(CONSOLE, "OSo - RTOS by roemvaar\r\n");
+    uart_printf(CONSOLE, "version: 0.1\r\n");
 
-    /* Kernel 1 Assignment */
-    int ret = task_create(1, &first_user_task);
-    if (ret < 0) {
-        uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
+    /* Create the first user task that will bootstrap the other applications.
+       This task is the equivalent to init_script in Linux.
+     */
+    int status;
+
+    status = task_create(1, &first_user_task);
+    if (status < 0) {
+        uart_printf(CONSOLE, "Error creating task: %d\r\n", status);
     }
-    uart_printf(CONSOLE, "Created: <%d>\r\n", ret);
+    uart_printf(CONSOLE, "Created: <%d>\r\n", status);
 
+    /* Start the scheduler, this function never returns */
     schedule();
 
-#ifdef DEBUG
-    int tid = sys_mytid();
-    uart_printf(CONSOLE, "current: %d\r\n", tid);
-    print_task();
-#endif
-
-    // while (1) {
-    //     schedule();
-    // }
-
-    return 0;
+    /* Should never reach here! */
+    return status;
 }
