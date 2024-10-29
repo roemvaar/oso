@@ -21,7 +21,7 @@ SRC_DIR=src
 
 # Compile options
 # -ffunction-sections causes each function to be in a separate section (linker script relies on this)
-WARNINGS=-Wall -Wextra -Wpedantic -Wno-unused-const-variable
+WARNINGS=-Wall -Wextra -Wpedantic -Wno-unused-const-variable -Werror
 C_FLAGS:=-g -pipe -static $(WARNINGS) -ffreestanding -nostartfiles -ffunction-sections\
 	-mcpu=$(ARCH) -static-pie -Iinclude -mstrict-align -fno-builtin -mgeneral-regs-only
 
