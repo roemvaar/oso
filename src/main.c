@@ -4,8 +4,9 @@
 #include "peripherals/timer.h"
 #include "peripherals/uart.h"
 #include "sched.h"
-#include "task.h"
 #include "sys.h"
+#include "task.h"
+#include "util.h"
 
 #define DEBUG
 
@@ -59,6 +60,7 @@ int kmain(void)
     uart_printf(CONSOLE, "*****************************************\r\n");
     uart_printf(CONSOLE, "OSo - RTOS by roemvaar\r\n");
     uart_printf(CONSOLE, "version: 0.1\r\n");
+    print_oso_logo();
 
     /* Create the first user task that will bootstrap the other applications.
        This task is the equivalent to init_script in Linux.

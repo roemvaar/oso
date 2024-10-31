@@ -1,5 +1,7 @@
 #include "util.h"
 
+#include "peripherals/uart.h"
+
 /* ASCII character to integer */
 int hex_char_to_int(char ch)
 {
@@ -63,6 +65,22 @@ void i2a(int num, char *bf)
     }
 
     ui2a(num, 10, bf);
+}
+
+void print_oso_logo(void)
+{
+    const char *bear_art =
+        " __         __\r\n"
+        "/  \\.-\"\"\"-./  \\\r\n"
+        "\\    -   -    /\r\n"
+        " |   o   o   |\r\n"
+        " \\  .-'''-.  /\r\n"
+        "  '-\\__Y__/-'\r\n"
+        "     `---`\r\n"
+        "\r\n"
+        "\r\n";
+
+    uart_printf(CONSOLE, "%s", bear_art);
 }
 
 // /* Just used for debugging certain */
