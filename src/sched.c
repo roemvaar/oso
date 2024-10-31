@@ -22,6 +22,9 @@ int num_tasks = 1;
 /* Pointer to the idle task */
 struct task_struct *idle_task;
 
+/* Priority queue array */
+struct priority_queue priority_queues[PRIORITY_LEVELS];
+
 #define DEBUG
 
 char stacks[MAX_TASKS][STACK_SIZE];
@@ -100,6 +103,14 @@ void sched_init(void)
     idle_task->cpu_context.pc = (unsigned long)ret_from_fork;
 
     uart_printf(CONSOLE, "sched: Idle task created with tid: %d\r\n", idle_tid);
+
+    /* Initialize priority queues */
+    for (int i = 0; i < PRIORITY_LEVELS; i++) {
+        priority_queues[i].head = NULL;
+        priority_queues[i].tail = NULL;
+    }
+
+    uart_printf(CONSOLE, "sched: Priority queues initiliazed\r\n");
 }
 
 void schedule(void)
@@ -143,6 +154,39 @@ void switch_to(struct task_struct *next)
     cpu_switch_to(prev, next);
 }
 
+int task_enqueue(struct task_struct *task)
+{
+    if (task == NULL) {
+        return -1;
+    }
+
+    int priority = task->priority;
+
+    /* If the queue is empty, set both head and tail to the new task */
+    if (priority_queues[priority].head == NULL) {
+        priority_queues[priority].head = task;
+    } else {
+        /* Otherwise, link the current tail to the new task */
+        priority_queues[priority].tail->next_ready_task = task;
+    }
+
+    /* Update the tail to the new task and ensure next pointer is NULL */
+    priority_queues[priority].tail = task;
+    task->next_ready_task = NULL;
+
+    return 0;
+}
+
+/*
+ * 0: t1 -> t5 -> t7 -> NULL
+ * 1: NULL
+ * 2: t3 -> t9 -> NULL
+ * 3: t2 -> NULL
+ * 4: t4 -> t8 -> NULL
+ */
+
+// struct task_struct *task_dequeue(void)
+
 int sys_mytid(void)
 {
     return current->tid;
@@ -156,15 +200,6 @@ int get_num_tasks(void)
 int get_new_tid(void)
 {
     return num_tasks;
-}
-
-void print_task(void)
-{
-    uart_printf(CONSOLE, "tid \t| prio \t| parent \r\n");
-    uart_printf(CONSOLE, "%d \t| %d \t| 0\r\n", task[0]->tid, task[0]->priority);   // init_task has a parent tid = 0
-    for (int i = 1; i < num_tasks; i++) {
-        uart_printf(CONSOLE, "%d \t| %d \t| %d\r\n", task[i]->tid, task[i]->priority, task[i]->parent->tid);
-    }
 }
 
 struct task_struct *get_current_task(void)
@@ -184,3 +219,35 @@ void delete_task(void)
     current->state = EXITED;
     schedule();
 }
+
+/* For debugging */
+void print_task(void)
+{
+    uart_printf(CONSOLE, "tid \t| prio \t| parent \r\n");
+    uart_printf(CONSOLE, "%d \t| %d \t| 0\r\n", task[0]->tid, task[0]->priority);   // init_task has a parent tid = 0
+    for (int i = 1; i < num_tasks; i++) {
+        uart_printf(CONSOLE, "%d \t| %d \t| %d\r\n", task[i]->tid, task[i]->priority, task[i]->parent->tid);
+    }
+}
+
+void print_priority_queues(void)
+{
+    for (int priority = MAX_PRIORITY; priority <= MIN_PRIORITY; priority++) {
+        struct task_struct *iter = priority_queues[priority].head;
+
+        uart_printf(CONSOLE, "%d: ", priority);
+
+        while (iter != NULL) {
+            uart_printf(CONSOLE, "tid%d -> ", iter->tid);
+            iter = iter->next_ready_task;
+        }
+
+        uart_printf(CONSOLE, "NULL\r\n");
+    }
+}
+
+// 0: tid1 -> tid7 -> tid6 -> NULL
+// 1: tid2 -> tid3 -> NULL
+// 2: tid5 -> NULL
+// 3: NULL
+// 4: tid4 -> NULL
