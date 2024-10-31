@@ -65,7 +65,7 @@ int kmain(void)
      */
     int status;
 
-    status = task_create(1, &first_user_task);
+    status = task_create(2, &first_user_task);
     if (status < 0) {
         uart_printf(CONSOLE, "Error creating task: %d\r\n", status);
     }

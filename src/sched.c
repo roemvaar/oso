@@ -202,15 +202,6 @@ int get_new_tid(void)
     return num_tasks;
 }
 
-void print_task(void)
-{
-    uart_printf(CONSOLE, "tid \t| prio \t| parent \r\n");
-    uart_printf(CONSOLE, "%d \t| %d \t| 0\r\n", task[0]->tid, task[0]->priority);   // init_task has a parent tid = 0
-    for (int i = 1; i < num_tasks; i++) {
-        uart_printf(CONSOLE, "%d \t| %d \t| %d\r\n", task[i]->tid, task[i]->priority, task[i]->parent->tid);
-    }
-}
-
 struct task_struct *get_current_task(void)
 {
     return current;
@@ -228,3 +219,35 @@ void delete_task(void)
     current->state = EXITED;
     schedule();
 }
+
+/* For debugging */
+void print_task(void)
+{
+    uart_printf(CONSOLE, "tid \t| prio \t| parent \r\n");
+    uart_printf(CONSOLE, "%d \t| %d \t| 0\r\n", task[0]->tid, task[0]->priority);   // init_task has a parent tid = 0
+    for (int i = 1; i < num_tasks; i++) {
+        uart_printf(CONSOLE, "%d \t| %d \t| %d\r\n", task[i]->tid, task[i]->priority, task[i]->parent->tid);
+    }
+}
+
+void print_priority_queues(void)
+{
+    for (int priority = MAX_PRIORITY; priority <= MIN_PRIORITY; priority++) {
+        struct task_struct *iter = priority_queues[priority].head;
+
+        uart_printf(CONSOLE, "%d: ", priority);
+
+        while (iter != NULL) {
+            uart_printf(CONSOLE, "tid%d -> ", iter->tid);
+            iter = iter->next_ready_task;
+        }
+
+        uart_printf(CONSOLE, "NULL\r\n");
+    }
+}
+
+// 0: tid1 -> tid7 -> tid6 -> NULL
+// 1: tid2 -> tid3 -> NULL
+// 2: tid5 -> NULL
+// 3: NULL
+// 4: tid4 -> NULL

@@ -112,5 +112,6 @@ int task_enqueue(struct task_struct *task);
 
 /* For debugging */
 void print_task(void);
+void print_priority_queues(void);
 
 #endif  /* SCHED_H_ */
