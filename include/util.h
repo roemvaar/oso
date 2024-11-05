@@ -5,7 +5,7 @@
 
 // #define NULL ((void*)0)   // TODO(roemvaar): define NULL
 
-// conversions
+/* Conversions */
 int hex_char_to_int(char ch);
 char a2i(char ch, char **src, int base, int *nump);
 void ui2a(unsigned int num, unsigned int base, char *bf);

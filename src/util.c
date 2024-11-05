@@ -1,5 +1,7 @@
 #include "util.h"
 
+#include "peripherals/uart.h"
+
 /* ASCII character to integer */
 int hex_char_to_int(char ch)
 {
@@ -64,10 +66,3 @@ void i2a(int num, char *bf)
 
     ui2a(num, 10, bf);
 }
-
-// /* Just used for debugging certain */
-// void print_debug()
-// {
-//     uart_printf(1, "DEBUG PRINT\r\n");
-//     return;
-// }

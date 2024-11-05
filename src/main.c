@@ -4,10 +4,27 @@
 #include "peripherals/timer.h"
 #include "peripherals/uart.h"
 #include "sched.h"
-#include "task.h"
 #include "sys.h"
+#include "task.h"
+#include "util.h"
 
 #define DEBUG
+
+void print_oso_logo(void)
+{
+    const char *bear_art =
+        " __         __\r\n"
+        "/  \\.-\"\"\"-./  \\\r\n"
+        "\\    -   -    /\r\n"
+        " |   o   o   |\r\n"
+        " \\  .-'''-.  /\r\n"
+        "  '-\\__Y__/-'\r\n"
+        "     `---`\r\n"
+        "\r\n"
+        "\r\n";
+
+    uart_printf(CONSOLE, "%s", bear_art);
+}
 
 /* start_kernel
  *
@@ -50,15 +67,18 @@ void start_kernel(void)
     int el = get_el();
     uart_printf(CONSOLE, "init: Exception level: EL%d...\r\n", el);
 #endif
+
+    uart_printf(CONSOLE, "*****************************************\r\n");
+    uart_printf(CONSOLE, "OSo - RTOS by roemvaar\r\n");
+    uart_printf(CONSOLE, "version: 0.1\r\n");
+    print_oso_logo();
 }
 
 int kmain(void)
 {
     start_kernel();
 
-    uart_printf(CONSOLE, "*****************************************\r\n");
-    uart_printf(CONSOLE, "OSo - RTOS by roemvaar\r\n");
-    uart_printf(CONSOLE, "version: 0.1\r\n");
+
 
     /* Create the first user task that will bootstrap the other applications.
        This task is the equivalent to init_script in Linux.
