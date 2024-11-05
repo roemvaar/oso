@@ -70,15 +70,13 @@ void start_kernel(void)
 
     uart_printf(CONSOLE, "*****************************************\r\n");
     uart_printf(CONSOLE, "OSo - RTOS by roemvaar\r\n");
-    uart_printf(CONSOLE, "version: 0.1\r\n");
+    uart_printf(CONSOLE, "version: 0.2 | Build: 2024-11-05\r\n");
     print_oso_logo();
 }
 
 int kmain(void)
 {
     start_kernel();
-
-
 
     /* Create the first user task that will bootstrap the other applications.
        This task is the equivalent to init_script in Linux.
@@ -89,7 +87,6 @@ int kmain(void)
     if (status < 0) {
         uart_printf(CONSOLE, "Error creating task: %d\r\n", status);
     }
-    uart_printf(CONSOLE, "Created: <%d>\r\n", status);
 
     /* Start the scheduler, this function never returns */
     schedule();

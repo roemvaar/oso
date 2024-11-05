@@ -66,7 +66,7 @@ struct task_struct *get_free_task_descriptor(void)
 void idle(void)
 {
     while (1) {
-        uart_printf(CONSOLE, "[idle]");
+        uart_printf(CONSOLE, "[idle]\r\n");
         delay(1000000);    /* This is ~ten seconds */
         schedule();
     }
@@ -117,8 +117,7 @@ void schedule(void)
 {
     struct task_struct *next_task = NULL;
 
-    /* Find the next runnable task */
-    /* Find the highest-priority READY task */
+    /* Find the next runnable task. Find the highest-priority READY task */
     int highest_priority = PRIORITY_LEVELS - 1;     /* Assuming lower number is higher priority */
     for (int i = 1; i < num_tasks; i++) {
         if (task[i] != NULL && task[i]->state == READY && task[i]->priority < highest_priority) {
@@ -129,8 +128,8 @@ void schedule(void)
 
     if (next_task == NULL) {
         /* No runnable task found, switch to the idle task */
-        uart_printf(CONSOLE, "[sched]: No task to run, switching to idle task\r\n");
-        switch_to(idle_task);       /* task[0] is the idle task */
+        uart_printf(CONSOLE, "sched: No task to run, switching to idle task\r\n");
+        switch_to(idle_task);
     } else {
         switch_to(next_task);
     }
@@ -146,8 +145,8 @@ void switch_to(struct task_struct *next)
     current = next;
 
 #ifdef DEBUG
-    uart_printf(CONSOLE, "Current task tid: %d\r\n", current->tid);
-    uart_printf(CONSOLE, "Switching to task tid: %d\r\n", next->tid);
+    uart_printf(CONSOLE, "sched: Current task tid: %d\r\n", current->tid);
+    uart_printf(CONSOLE, "sched: Switching to task tid: %d\r\n", next->tid);
 #endif
 
     /* Perform the context switch */
@@ -235,7 +234,7 @@ void print_priority_queues(void)
     for (int priority = MAX_PRIORITY; priority <= MIN_PRIORITY; priority++) {
         struct task_struct *iter = priority_queues[priority].head;
 
-        uart_printf(CONSOLE, "%d: ", priority);
+        uart_printf(CONSOLE, "Priority queue %d: ", priority);
 
         while (iter != NULL) {
             uart_printf(CONSOLE, "tid%d -> ", iter->tid);

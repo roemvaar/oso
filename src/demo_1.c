@@ -29,14 +29,12 @@ void first_user_task(void)
         uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
         return;
     }
-    uart_printf(CONSOLE, "Created: <%d>\r\n", ret);
 
     ret = task_create(4, &test_task);
     if (ret < 0) {
         uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
         return;
     }
-    uart_printf(CONSOLE, "Created: <%d>\r\n", ret);
 
     /* Two higher priority tasks */
     ret = task_create(0, &test_task);
@@ -44,14 +42,12 @@ void first_user_task(void)
         uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
         return;
     }
-    uart_printf(CONSOLE, "Created: <%d>\r\n", ret);
 
     ret = task_create(1, &test_task);
     if (ret < 0) {
         uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
         return;
     }
-    uart_printf(CONSOLE, "Created: <%d>\r\n", ret);
 
     uart_printf(CONSOLE, "FirstUserTask: exiting...\r\n");
     print_priority_queues();

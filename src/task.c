@@ -2,8 +2,11 @@
 
 #include "arm/utils.h"
 #include "mm.h"
+#include "peripherals/uart.h"
 #include "sched.h"
 #include "sys.h"
+
+#define DEBUG
 
 /* task_create
  *
@@ -57,6 +60,10 @@ int task_create(int priority, void (*task_code)(void))
 
     /* Add new task into ready_queue */
     task_enqueue(new_task);
+
+#ifdef DEBUG
+    uart_printf(CONSOLE, "task: Created with tid: %d\r\n", new_task->tid);
+#endif
 
     return new_task->tid;
 }
