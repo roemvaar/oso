@@ -68,7 +68,7 @@ int task_create(int priority, void (*task_code)(void))
     return new_task->tid;
 }
 
-/* task_tid
+/* Task ID (task_tid)
  * 
  * Returns the task id of the calling task.
  * 
@@ -80,7 +80,7 @@ int task_tid(void)
     return sys_tid();
 }
 
-/* task_parent_tid
+/* Parent's Task ID (task_parent_tid)
  *
  * Returns the task id of the task that created the calling task. This will be
  * problematic only if the parent task has exited or been destroyed, in which
@@ -95,10 +95,10 @@ int task_parent_tid(void)
 {
     int parent_tid;
     struct task_struct *current_task;
-    
+
     current_task = get_current_task();
 
-    // Check if the current task is the init_task
+    /* Check if the current task is the init_task */
     if (current_task->tid == 0) {
         parent_tid = 0;
     } else {
@@ -112,19 +112,20 @@ int task_parent_tid(void)
     }
 
     return parent_tid;
+    /* return sys_parent_tid(); */
 }
 
-/* task_yield
+/* Task Yield (task_yield)
  *
  * Causes a task to pause executing. The task is moved to the end of its priority
  * queue, and will resume executing when next scheduled. 
  */
 void task_yield(void)
 {
-    stop_task();
+    sys_stop_task();
 }
 
-/* task_exit
+/* Task Exit (task_exit)
  *
  * Causes a task to cease execution permanently. It is removed from all priority
  * queues, send queues, receive queues and event queues. Resources owned by the
@@ -132,5 +133,5 @@ void task_yield(void)
  */
 void task_exit(void)
 {
-    delete_task();
+    sys_delete_task();
 }

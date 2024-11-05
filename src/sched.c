@@ -225,12 +225,17 @@ struct task_struct *get_current_task(void)
     return current;
 }
 
-void stop_task(void)
+/* Causes a task to pause executing. The task is moved to the end of its priority queue,
+ * and will resume executing when next scheduled;
+*/ 
+void sys_stop_task(void)
 {
-    return;
+    current->state = READY;
+    /* Move current to the end of its ready priority queue */
+    schedule();
 }
 
-void delete_task(void)
+void sys_delete_task(void)
 {
     current->state = EXITED;
     task_dequeue();

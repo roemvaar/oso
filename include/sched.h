@@ -76,7 +76,7 @@ struct task_struct
     long tid;                               /* Task identifier (tid), which is unique among all active tasks */
     long priority;                          /* The task's priority */
     TaskState_t state;                      /* The task's current run state */
-    struct task_struct *parent;             /* A pointer to the task descriptor of the task that created it, its parent */
+    struct task_struct *parent;             /* A pointer to the task descriptor of the task that created it */
     struct task_struct *next_ready_task;        /* Pointer to the next ready task on queue (scheduler) */
     struct task_struct *next_send_queue_task;   /* Pointer to the next task on the send queue */
 };
@@ -103,8 +103,6 @@ int get_num_tasks(void);
 int get_new_tid(void);
 struct task_struct *get_free_task_descriptor(void);
 struct task_struct *get_current_task(void);
-void stop_task(void);
-void delete_task(void);
 void switch_to(struct task_struct *next);
 void *allocate_stack(int tid);
 
