@@ -1,6 +1,6 @@
 #ifndef SYS_H_
 #define SYS_H_
 
-extern int sys_mytid(void);
+extern int sys_tid(void);
 
 #endif  /* SYS_H_ */

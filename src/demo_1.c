@@ -56,13 +56,11 @@ void first_user_task(void)
 
 void test_task(void)
 {
-    struct task_struct *current = get_current_task();
-
-    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", current->tid, task_parent_tid());
+    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", task_tid(), task_parent_tid());
 
     task_yield();
 
-    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", current->tid, task_parent_tid());
+    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", task_tid(), task_parent_tid());
 
     print_priority_queues();
 
@@ -104,10 +102,11 @@ void display_ascii_art(void)
 void task1(void)
 {
     while (1) {
-        int tid = sys_mytid();
-        uart_printf(CONSOLE, "current: %d\r\n", tid);
+        uart_printf(CONSOLE, "current: %d\r\n", task_tid());
+
         for (int i = 0; i < 5; i++) {
             uart_printf(CONSOLE, "Task 1: %d\r\n", i);
+
             if (i == 2) {
                 switch_to(task[2]);
             }
@@ -118,8 +117,7 @@ void task1(void)
 
 void task_example(void)
 {
-    int tid = sys_mytid();
-    uart_printf(CONSOLE, "current: %d\r\n", tid);
+    uart_printf(CONSOLE, "current: %d\r\n", task_tid());
 
     delay(50000000);
     schedule();

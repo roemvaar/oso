@@ -205,7 +205,7 @@ void task_dequeue(void)
     }
 }
 
-int sys_mytid(void)
+int sys_tid(void)
 {
     return current->tid;
 }
@@ -241,7 +241,7 @@ void delete_task(void)
 void print_task(void)
 {
     uart_printf(CONSOLE, "tid \t| prio \t| parent \r\n");
-    uart_printf(CONSOLE, "%d \t| %d \t| 0\r\n", task[0]->tid, task[0]->priority);   // init_task has a parent tid = 0
+    uart_printf(CONSOLE, "%d \t| %d \t| 0\r\n", task[0]->tid, task[0]->priority);   /* init_task has a parent tid = 0 */
     for (int i = 1; i < num_tasks; i++) {
         uart_printf(CONSOLE, "%d \t| %d \t| %d\r\n", task[i]->tid, task[i]->priority, task[i]->parent->tid);
     }

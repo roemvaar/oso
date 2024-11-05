@@ -18,19 +18,19 @@
  * entered into its ready queue so that it will run the next time it is scheduled.
  *
  * return:
- *      tid - success creating new task
+ *      tid - success creating new task. The task id is unique.
  *      -1  - invalid priority
  *      -2  - kernel is out of task descriptors
  */
 int task_create(int priority, void (*task_code)(void))
 {
     /* Check that the priority is valid */
-    if (priority < 0 || priority >= PRIORITY_LEVELS) {
+    if (priority < HIGHEST_PRIORITY || priority > LOWEST_PRIORITY) {
         return -1;
     }
 
     /* Get an empty slot on the task descriptor's array and fill the structure */
-    struct task_struct *new_task = (struct task_struct *)get_free_task_descriptor();
+    struct task_struct *new_task = get_free_task_descriptor();
     if (new_task == NULL) {
         return -2;      /* No available task descriptors */
     }
