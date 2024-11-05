@@ -11,7 +11,4 @@ char a2i(char ch, char **src, int base, int *nump);
 void ui2a(unsigned int num, unsigned int base, char *bf);
 void i2a(int num, char *bf);
 
-/* Logo */
-void print_oso_logo(void);
-
 #endif  /* UTIL_H_ */
