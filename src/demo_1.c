@@ -22,49 +22,49 @@ void first_user_task(void)
      */
 
     /* Two lower priority tasks */
-    int ret;
+    int status;
 
-    ret = task_create(3, &test_task);
-    if (ret < 0) {
-        uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
+    status = task_create(3, &test_task);
+    if (status < 0) {
+        uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
         return;
     }
 
-    ret = task_create(4, &test_task);
-    if (ret < 0) {
-        uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
+    status = task_create(4, &test_task);
+    if (status < 0) {
+        uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
         return;
     }
 
     /* Two higher priority tasks */
-    ret = task_create(0, &test_task);
-    if (ret < 0) {
-        uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
+    status = task_create(0, &test_task);
+    if (status < 0) {
+        uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
         return;
     }
 
-    ret = task_create(1, &test_task);
-    if (ret < 0) {
-        uart_printf(CONSOLE, "Error creating task: %d\r\n", ret);
+    status = task_create(1, &test_task);
+    if (status < 0) {
+        uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
         return;
     }
 
     uart_printf(CONSOLE, "FirstUserTask: exiting...\r\n");
     print_priority_queues();
-    delay(100000000);    /* This is ~ten seconds */
     task_exit();
 }
 
 void test_task(void)
 {
     struct task_struct *current = get_current_task();
-    struct task_struct *parent = current->parent;
 
-    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", current->tid, parent->tid);
+    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", current->tid, task_parent_tid());
 
     task_yield();
 
-    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", current->tid, parent->tid);
+    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", current->tid, task_parent_tid());
+
+    print_priority_queues();
 
     task_exit();
 }

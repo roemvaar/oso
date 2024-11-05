@@ -4,8 +4,8 @@
 #include "mm.h"
 
 #define PRIORITY_LEVELS 5
-#define MAX_PRIORITY 0
-#define MIN_PRIORITY (PRIORITY_LEVELS - 1)
+#define HIGHEST_PRIORITY 0
+#define LOWEST_PRIORITY (PRIORITY_LEVELS - 1)
 #define MAX_TASKS 64
 
 #define FIRST_TASK task[0]
@@ -108,7 +108,7 @@ void switch_to(struct task_struct *next);
 void *allocate_stack(int tid);
 
 int task_enqueue(struct task_struct *task);
-// task_dequeue
+void task_dequeue(void);
 
 /* For debugging */
 void print_task(void);

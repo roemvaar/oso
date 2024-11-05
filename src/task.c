@@ -86,7 +86,7 @@ int MyTid(void)
  * problematic only if the parent task has exited or been destroyed, in which
  * case the return value is an error.
  * 
- * return: 
+ * return:
  *      tid - the task id of the task that created the caller
  *       0  - if the current task is init_task
  *      -1  - if parent has been destroyed
@@ -94,8 +94,9 @@ int MyTid(void)
 int task_parent_tid(void)
 {
     int parent_tid;
-
-    struct task_struct *current_task = get_current_task();
+    struct task_struct *current_task;
+    
+    current_task = get_current_task();
 
     // Check if the current task is the init_task
     if (current_task->tid == 0) {
@@ -103,7 +104,7 @@ int task_parent_tid(void)
     } else {
         struct task_struct *parent = current_task->parent;
 
-        if (parent->state == EXITED) {
+        if (parent == NULL || parent->state == EXITED) {
             parent_tid = -1;
         } else {
             parent_tid = parent->tid;

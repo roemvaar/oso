@@ -117,12 +117,13 @@ void schedule(void)
 {
     struct task_struct *next_task = NULL;
 
-    /* Find the next runnable task. Find the highest-priority READY task */
-    int highest_priority = PRIORITY_LEVELS - 1;     /* Assuming lower number is higher priority */
-    for (int i = 1; i < num_tasks; i++) {
-        if (task[i] != NULL && task[i]->state == READY && task[i]->priority < highest_priority) {
-            next_task = task[i];
-            highest_priority = task[i]->priority;
+    /* Find the next runnable task by looking at the priority quueues */
+    for (int priority = HIGHEST_PRIORITY; priority <= LOWEST_PRIORITY; priority++) {
+        struct task_struct *iter_task = priority_queues[priority].head;
+
+        if (iter_task != NULL && iter_task->state == READY) {
+            next_task = iter_task;
+            break;
         }
     }
 
@@ -143,6 +144,7 @@ void switch_to(struct task_struct *next)
 
     struct task_struct *prev = current;
     current = next;
+    current->state = RUNNING;
 
 #ifdef DEBUG
     uart_printf(CONSOLE, "sched: Current task tid: %d\r\n", current->tid);
@@ -176,15 +178,32 @@ int task_enqueue(struct task_struct *task)
     return 0;
 }
 
-/*
- * 0: t1 -> t5 -> t7 -> NULL
- * 1: NULL
- * 2: t3 -> t9 -> NULL
- * 3: t2 -> NULL
- * 4: t4 -> t8 -> NULL
- */
+void task_dequeue(void)
+{
+    /* Remove task from its corresponding priority queue */
+    int priority;
+    struct task_struct *iter_task;
+    struct task_struct *prev;
 
-// struct task_struct *task_dequeue(void)
+    priority = current->priority;
+    iter_task = priority_queues[priority].head;
+    prev = NULL;
+
+    while (iter_task != NULL) {
+        if (iter_task->tid == current->tid) {
+            /* Found the task to remove */
+            if (prev == NULL) {
+                priority_queues[priority].head = iter_task->next_ready_task;
+            } else {
+                prev->next_ready_task = iter_task->next_ready_task;
+            }
+            break;
+        }
+
+        prev = iter_task;
+        iter_task = iter_task->next_ready_task;
+    }
+}
 
 int sys_mytid(void)
 {
@@ -211,11 +230,10 @@ void stop_task(void)
     return;
 }
 
-// TODO(roemvaar): Resources owned by the task, primarily its memory and task descriptor, may be reclaimed.
 void delete_task(void)
 {
-    /* TODO(roemvar): this is only for testing */
     current->state = EXITED;
+    task_dequeue();
     schedule();
 }
 
@@ -231,7 +249,7 @@ void print_task(void)
 
 void print_priority_queues(void)
 {
-    for (int priority = MAX_PRIORITY; priority <= MIN_PRIORITY; priority++) {
+    for (int priority = HIGHEST_PRIORITY; priority <= LOWEST_PRIORITY; priority++) {
         struct task_struct *iter = priority_queues[priority].head;
 
         uart_printf(CONSOLE, "Priority queue %d: ", priority);
@@ -244,9 +262,3 @@ void print_priority_queues(void)
         uart_printf(CONSOLE, "NULL\r\n");
     }
 }
-
-// 0: tid1 -> tid7 -> tid6 -> NULL
-// 1: tid2 -> tid3 -> NULL
-// 2: tid5 -> NULL
-// 3: NULL
-// 4: tid4 -> NULL
