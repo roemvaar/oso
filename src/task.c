@@ -8,7 +8,7 @@
 
 #define DEBUG
 
-/* task_create
+/* Task Create (task_create)
  *
  * Allocates and initializes a task descriptor, using the given priority, and
  * the given function pointer as a pointer to the entry point of executable
@@ -56,7 +56,7 @@ int task_create(int priority, void (*task_code)(void))
     new_task->parent = get_current_task();
     new_task->state = READY;
     new_task->next_ready_task = NULL;
-    new_task->next_task_send_queue = NULL;
+    new_task->next_send_queue_task = NULL;
 
     /* Add new task into ready_queue */
     task_enqueue(new_task);
@@ -75,9 +75,9 @@ int task_create(int priority, void (*task_code)(void))
  * return:
  *      tid - the task id of the task that is currently running
  */
-int MyTid(void)
+int task_tid(void)
 {
-    return sys_mytid();
+    return sys_tid();
 }
 
 /* task_parent_tid

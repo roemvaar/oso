@@ -17,7 +17,7 @@ extern struct task_struct *task[MAX_TASKS];
 extern struct task_struct *current;
 extern int num_tasks;
 
-/* TaskState_t
+/* Task State (TaskState_t)
  *
  * A task is in one of the following run states:
  * 
@@ -40,12 +40,11 @@ typedef enum
     EVENT_BLOCKED = 6
 } TaskState_t;
 
-/* struct cpu_context
+/* CPU Context (struct cpu_context)
  *
- * struct cpu_context contains values of all registers that might be different
+ * The CPU context contains values of all registers that might be different
  * between tasks that are being switched. Context switch happens only when
  * `cpu_switch_to` function is called.
- * https://s-matyukevich.github.io/raspberry-pi-os/docs/lesson04/rpi-os.html
  */
 struct cpu_context
 {
@@ -62,22 +61,24 @@ struct cpu_context
     unsigned long x26;
     unsigned long x27;
     unsigned long x28;
-    unsigned long fp;       // Frame Pointer (FP x29)
-    unsigned long sp;       // Stack Pointer (SP)
+    unsigned long fp;       /* Frame Pointer (FP x29) */
+    unsigned long sp;       /* Stack Pointer (SP) */
     unsigned long pc;
 };
 
-/* struct task_struct
+/* Task Descriptor (struct task_struct)
+ * 
+ * Every existing task has a task descriptor allocated to it.
  */
 struct task_struct
 {
-    struct cpu_context cpu_context;       /* This is the context, includes the tasks's SPSR */
-    long tid;                        /* Task identifier (tid), which is unique among all active tasks */
-    long priority;                   /* The task's priority */
-    TaskState_t state;              /* The task's current run state */
-    struct task_struct *parent;    /* A pointer to the TaskDescriptor of the task that created it, its parent */
-    struct task_struct *next_ready_task;  /* Pointer to TaskDescriptor of the next ready task (schedule) */
-    struct task_struct *next_task_send_queue;   /* Pointer to TaskDescriptor of the next ready task (send queue) */
+    struct cpu_context cpu_context;         /* This is the context */
+    long tid;                               /* Task identifier (tid), which is unique among all active tasks */
+    long priority;                          /* The task's priority */
+    TaskState_t state;                      /* The task's current run state */
+    struct task_struct *parent;             /* A pointer to the task descriptor of the task that created it, its parent */
+    struct task_struct *next_ready_task;        /* Pointer to the next ready task on queue (scheduler) */
+    struct task_struct *next_send_queue_task;   /* Pointer to the next task on the send queue */
 };
 
 /* struct priority_queue
