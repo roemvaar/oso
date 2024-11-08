@@ -70,7 +70,7 @@ void start_kernel(void)
 
     uart_printf(CONSOLE, "*****************************************\r\n");
     uart_printf(CONSOLE, "OSo - RTOS by roemvaar\r\n");
-    uart_printf(CONSOLE, "version: 0.2 | Build: 2024-11-05\r\n");
+    uart_printf(CONSOLE, "version: 0.2 | Build: 2024-11-07\r\n");
     print_oso_logo();
 }
 

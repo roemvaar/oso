@@ -147,7 +147,7 @@ void switch_to(struct task_struct *next)
     current->state = RUNNING;
 
 #ifdef DEBUG
-    uart_printf(CONSOLE, "sched: Current task tid: %d\r\n", current->tid);
+    uart_printf(CONSOLE, "sched: Switching from task tid: %d\r\n", prev->tid);
     uart_printf(CONSOLE, "sched: Switching to task tid: %d\r\n", next->tid);
 #endif
 
@@ -205,7 +205,7 @@ void task_dequeue(void)
     }
 }
 
-int sys_mytid(void)
+int sys_tid(void)
 {
     return current->tid;
 }
@@ -225,12 +225,19 @@ struct task_struct *get_current_task(void)
     return current;
 }
 
-void stop_task(void)
+/* Causes a task to pause executing. The task is moved to the end of its priority queue,
+ * and will resume executing when next scheduled;
+*/ 
+void sys_stop_task(void)
 {
-    return;
+    current->state = READY;
+    /* Move current to the end of its ready priority queue */
+    task_dequeue();
+    task_enqueue(current);
+    schedule();
 }
 
-void delete_task(void)
+void sys_delete_task(void)
 {
     current->state = EXITED;
     task_dequeue();
@@ -241,7 +248,7 @@ void delete_task(void)
 void print_task(void)
 {
     uart_printf(CONSOLE, "tid \t| prio \t| parent \r\n");
-    uart_printf(CONSOLE, "%d \t| %d \t| 0\r\n", task[0]->tid, task[0]->priority);   // init_task has a parent tid = 0
+    uart_printf(CONSOLE, "%d \t| %d \t| 0\r\n", task[0]->tid, task[0]->priority);   /* init_task has a parent tid = 0 */
     for (int i = 1; i < num_tasks; i++) {
         uart_printf(CONSOLE, "%d \t| %d \t| %d\r\n", task[i]->tid, task[i]->priority, task[i]->parent->tid);
     }

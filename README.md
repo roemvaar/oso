@@ -69,8 +69,6 @@ Make sure to specify the path to the cross toolchain on your dev machine.
 
 ## Usage
 
-<!-- We follow the [Google style guidelines](https://google.github.io/styleguide/cppguide.html). -->
-
 The `make` command will produce `kernel8.img`, which is a memory image of our kernel. This binary is the
 one that needs to be deployed to the RPi4 and run. The steps consists of flashing the image into the SD
 card, then inserting it into the RPi4, then powering the board, and the kernel should start booting and
@@ -104,8 +102,6 @@ $ make debug
 ```
 
 The `debug` target produces the `objdump.txt` and `readelf.txt` that help to debug the kernel.
-
-<!-- See the course web page for detailed instructions on how to [build and deploy instructions](https://student.cs.uwaterloo.ca/~cs452/F23/). -->
 
 <!-- ## Usage
 Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.

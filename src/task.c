@@ -8,7 +8,7 @@
 
 #define DEBUG
 
-/* task_create
+/* Task Create (task_create)
  *
  * Allocates and initializes a task descriptor, using the given priority, and
  * the given function pointer as a pointer to the entry point of executable
@@ -18,19 +18,19 @@
  * entered into its ready queue so that it will run the next time it is scheduled.
  *
  * return:
- *      tid - success creating new task
+ *      tid - success creating new task. The task id is unique.
  *      -1  - invalid priority
  *      -2  - kernel is out of task descriptors
  */
 int task_create(int priority, void (*task_code)(void))
 {
     /* Check that the priority is valid */
-    if (priority < 0 || priority >= PRIORITY_LEVELS) {
+    if (priority < HIGHEST_PRIORITY || priority > LOWEST_PRIORITY) {
         return -1;
     }
 
     /* Get an empty slot on the task descriptor's array and fill the structure */
-    struct task_struct *new_task = (struct task_struct *)get_free_task_descriptor();
+    struct task_struct *new_task = get_free_task_descriptor();
     if (new_task == NULL) {
         return -2;      /* No available task descriptors */
     }
@@ -56,7 +56,7 @@ int task_create(int priority, void (*task_code)(void))
     new_task->parent = get_current_task();
     new_task->state = READY;
     new_task->next_ready_task = NULL;
-    new_task->next_task_send_queue = NULL;
+    new_task->next_send_queue_task = NULL;
 
     /* Add new task into ready_queue */
     task_enqueue(new_task);
@@ -68,19 +68,19 @@ int task_create(int priority, void (*task_code)(void))
     return new_task->tid;
 }
 
-/* task_tid
+/* Task ID (task_tid)
  * 
  * Returns the task id of the calling task.
  * 
  * return:
  *      tid - the task id of the task that is currently running
  */
-int MyTid(void)
+int task_tid(void)
 {
-    return sys_mytid();
+    return sys_tid();
 }
 
-/* task_parent_tid
+/* Parent's Task ID (task_parent_tid)
  *
  * Returns the task id of the task that created the calling task. This will be
  * problematic only if the parent task has exited or been destroyed, in which
@@ -95,10 +95,10 @@ int task_parent_tid(void)
 {
     int parent_tid;
     struct task_struct *current_task;
-    
+
     current_task = get_current_task();
 
-    // Check if the current task is the init_task
+    /* Check if the current task is the init_task */
     if (current_task->tid == 0) {
         parent_tid = 0;
     } else {
@@ -112,19 +112,20 @@ int task_parent_tid(void)
     }
 
     return parent_tid;
+    /* return sys_parent_tid(); */
 }
 
-/* task_yield
+/* Task Yield (task_yield)
  *
  * Causes a task to pause executing. The task is moved to the end of its priority
  * queue, and will resume executing when next scheduled. 
  */
 void task_yield(void)
 {
-    stop_task();
+    sys_stop_task();
 }
 
-/* task_exit
+/* Task Exit (task_exit)
  *
  * Causes a task to cease execution permanently. It is removed from all priority
  * queues, send queues, receive queues and event queues. Resources owned by the
@@ -132,5 +133,5 @@ void task_yield(void)
  */
 void task_exit(void)
 {
-    delete_task();
+    sys_delete_task();
 }

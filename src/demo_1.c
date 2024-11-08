@@ -30,39 +30,37 @@ void first_user_task(void)
         return;
     }
 
-    status = task_create(4, &test_task);
+    status = task_create(3, &user_task);
     if (status < 0) {
         uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
         return;
     }
 
     /* Two higher priority tasks */
-    status = task_create(0, &test_task);
-    if (status < 0) {
-        uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
-        return;
-    }
-
     status = task_create(1, &test_task);
     if (status < 0) {
         uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
         return;
     }
 
-    uart_printf(CONSOLE, "FirstUserTask: exiting...\r\n");
+    status = task_create(1, &user_task);
+    if (status < 0) {
+        uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
+        return;
+    }
+
     print_priority_queues();
+    uart_printf(CONSOLE, "FirstUserTask: exiting...\r\n");
     task_exit();
 }
 
 void test_task(void)
 {
-    struct task_struct *current = get_current_task();
-
-    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", current->tid, task_parent_tid());
+    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", task_tid(), task_parent_tid());
 
     task_yield();
 
-    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", current->tid, task_parent_tid());
+    uart_printf(CONSOLE, "After task yield... TestTask - tid: %d, parent_tid: %d\r\n", task_tid(), task_parent_tid());
 
     print_priority_queues();
 
@@ -71,11 +69,12 @@ void test_task(void)
 
 void user_task(void)
 {
-    while (1) {
-        for (int i = 0; i < 5; i++) {
-            uart_printf(CONSOLE, "first_task (user): %d\r\n", i);
-        }
+    for (int i = 0; i < 5; i++) {
+            uart_printf(CONSOLE, "%d: User Task (tid): %d\r\n", i, task_tid());
     }
+
+    print_priority_queues();
+    task_exit();
 }
 
 void hello_name(char *array)
@@ -104,10 +103,11 @@ void display_ascii_art(void)
 void task1(void)
 {
     while (1) {
-        int tid = sys_mytid();
-        uart_printf(CONSOLE, "current: %d\r\n", tid);
+        uart_printf(CONSOLE, "current: %d\r\n", task_tid());
+
         for (int i = 0; i < 5; i++) {
             uart_printf(CONSOLE, "Task 1: %d\r\n", i);
+
             if (i == 2) {
                 switch_to(task[2]);
             }
@@ -118,8 +118,7 @@ void task1(void)
 
 void task_example(void)
 {
-    int tid = sys_mytid();
-    uart_printf(CONSOLE, "current: %d\r\n", tid);
+    uart_printf(CONSOLE, "current: %d\r\n", task_tid());
 
     delay(50000000);
     schedule();

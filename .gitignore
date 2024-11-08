@@ -57,7 +57,8 @@ build/*
 TODO*
 .vscode/*
 *.log
-cov-int/*
 *.xz
 xdev/*
 test/test
+tools/cov-int/
+cov-int/
