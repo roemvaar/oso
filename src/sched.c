@@ -147,7 +147,7 @@ void switch_to(struct task_struct *next)
     current->state = RUNNING;
 
 #ifdef DEBUG
-    uart_printf(CONSOLE, "sched: Current task tid: %d\r\n", current->tid);
+    uart_printf(CONSOLE, "sched: Switching from task tid: %d\r\n", prev->tid);
     uart_printf(CONSOLE, "sched: Switching to task tid: %d\r\n", next->tid);
 #endif
 
@@ -232,6 +232,8 @@ void sys_stop_task(void)
 {
     current->state = READY;
     /* Move current to the end of its ready priority queue */
+    task_dequeue();
+    task_enqueue(current);
     schedule();
 }
 
