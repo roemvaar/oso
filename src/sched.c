@@ -7,6 +7,8 @@
 #include "mm.h"
 #include "task.h"
 
+#define DEBUG
+
 /* Pre-allocated task descriptor array (static array) */
 static struct task_struct task_structs[MAX_TASKS];
 
@@ -66,8 +68,10 @@ struct task_struct *get_free_task_descriptor(void)
 void idle(void)
 {
     while (1) {
+#ifdef DEBUG
         uart_printf(CONSOLE, "[idle]\r\n");
-        delay(1000000);    /* This is ~ten seconds */
+#endif
+        delay(100000);    /* This is ~one seconds */
         schedule();
     }
 }
