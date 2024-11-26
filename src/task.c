@@ -93,26 +93,7 @@ int task_tid(void)
  */
 int task_parent_tid(void)
 {
-    int parent_tid;
-    struct task_struct *current_task;
-
-    current_task = get_current_task();
-
-    /* Check if the current task is the init_task */
-    if (current_task->tid == 0) {
-        parent_tid = 0;
-    } else {
-        struct task_struct *parent = current_task->parent;
-
-        if (parent == NULL || parent->state == EXITED) {
-            parent_tid = -1;
-        } else {
-            parent_tid = parent->tid;
-        }
-    }
-
-    return parent_tid;
-    /* return sys_parent_tid(); */
+    return sys_parent_tid();
 }
 
 /* Task Yield (task_yield)

@@ -8,7 +8,8 @@
 
 void first_user_task(void)
 {
-    /* Kernel 1
+    /* 
+     * Kernel 1
      * https://student.cs.uwaterloo.ca/~cs452/F23/assignments/k1.html
      * 
      * The first user task should create four instances of a test task:
@@ -24,7 +25,7 @@ void first_user_task(void)
     /* Two lower priority tasks */
     int status;
 
-    status = task_create(3, &test_task);
+    status = task_create(4, &test_task);
     if (status < 0) {
         uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
         return;
@@ -62,7 +63,9 @@ void test_task(void)
 
     uart_printf(CONSOLE, "After task yield... TestTask - tid: %d, parent_tid: %d\r\n", task_tid(), task_parent_tid());
 
+#ifdef DEBUG
     print_priority_queues();
+#endif
 
     task_exit();
 }

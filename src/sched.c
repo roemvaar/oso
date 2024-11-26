@@ -7,7 +7,9 @@
 #include "mm.h"
 #include "task.h"
 
-/* Pre-allocated task descriptor array (static memory) */
+#define DEBUG
+
+/* Pre-allocated task descriptor array (static array) */
 static struct task_struct task_structs[MAX_TASKS];
 
 static struct task_struct init_task = INIT_TASK;
@@ -66,8 +68,10 @@ struct task_struct *get_free_task_descriptor(void)
 void idle(void)
 {
     while (1) {
+#ifdef DEBUG
         uart_printf(CONSOLE, "[idle]\r\n");
-        delay(1000000);    /* This is ~ten seconds */
+#endif
+        delay(100000);    /* This is ~one seconds */
         schedule();
     }
 }
@@ -208,6 +212,29 @@ void task_dequeue(void)
 int sys_tid(void)
 {
     return current->tid;
+}
+
+int sys_parent_tid(void)
+{
+    int parent_tid;
+    struct task_struct *current_task;
+
+    current_task = get_current_task();
+
+    /* Check if the current task is the init_task */
+    if (current_task->tid == 0) {
+        parent_tid = 0;
+    } else {
+        struct task_struct *parent = current_task->parent;
+
+        if (parent == NULL || parent->state == EXITED) {
+            parent_tid = -1;
+        } else {
+            parent_tid = parent->tid;
+        }
+    }
+
+    return parent_tid;
 }
 
 int get_num_tasks(void)
