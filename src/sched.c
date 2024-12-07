@@ -296,3 +296,8 @@ void print_priority_queues(void)
         uart_printf(CONSOLE, "NULL\r\n");
     }
 }
+
+void set_task_state(struct task_struct *task, TaskState_t state)
+{
+    task->state = state;
+}
