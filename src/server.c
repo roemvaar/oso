@@ -1,9 +1,9 @@
-#include "name_server.h"
+#include "server.h"
 
 #include "sched.h"
 #include "peripherals/uart.h"
 
-int register_as(const char *name)
+int server_register_as(const char *name)
 {
     struct task_struct *current;
     int tid;
@@ -11,12 +11,14 @@ int register_as(const char *name)
     current = get_current_task();
     tid = current->tid;
 
-    uart_print(CONSOLE, "%s\n", name);
+    uart_printf(CONSOLE, "%s with tid: %d\n", name, tid);
 
     return 0;
 }
 
-int who_is(const char *name)
+int server_who_is(const char *name)
 {
+    (void) name;
+
     return 0;
 }
