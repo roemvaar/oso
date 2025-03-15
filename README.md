@@ -3,6 +3,8 @@
 OSo ("bear" in Spanish) is a microkernel for embedded systems as designed and developed
 by Roberto Valenzuela (roemvaar). It currently supports Raspberry Pi 4 Model B.
 
+OSo is a microkernel that handles only a few, but important, device functions, such as the boot-up process, hardware communication, and management of application process.
+
 <!--
 
 ## Description
