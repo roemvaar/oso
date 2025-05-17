@@ -28,18 +28,20 @@
 
 // Execution starts here
 .global _start
+
 _start:
     // Check processor ID is zero (executing on main core), else hang
     // mrs x0, mpidr_el1
     // and x0, x0, #3
     // cbnz x0, exit
 
-    // are we already in EL1?
+    // Processors enter EL3 after reset. Our kernel needs to run on EL1.
+    // Are we already in EL1?
     mrs x1, CurrentEL
     and x1, x1, #8
     cbz x1, el1_entry
 
-    // otherwise, switch to EL1 by fake exception to return from
+    // Otherwise, switch to EL1 by fake exception to return from
     ldr x2, =HCR_RW
     msr hcr_el2, x2
 
