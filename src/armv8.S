@@ -173,12 +173,10 @@ handle_el0_irq:
 
 .align 8
 sync_el0_64:
-    kernel_entry
-    mrs x1, esr_el1
-    mrs x2, elr_el1
-    mrs x3, far_el1
-    bl show_invalid_entry_message   // TODO: Decode ESR_EL1 to dispatch syscall or handle user exception
-    kernel_exit
+    kernel_entry    // push x0-x30 onto the new SP
+    mov x0, sp      // pass pointer to that saved-regs block
+    bl syscall_handler
+    kernel_exit     // pop x0-x30 and eret back to EL0
 
 /* Error hang */
 .align 8

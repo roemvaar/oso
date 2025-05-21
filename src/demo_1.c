@@ -57,11 +57,11 @@ void first_user_task(void)
 
 void test_task(void)
 {
-    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", task_tid(), task_parent_tid());
+    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", MyTid(), task_parent_tid());
 
     task_yield();
 
-    uart_printf(CONSOLE, "After task yield... TestTask - tid: %d, parent_tid: %d\r\n", task_tid(), task_parent_tid());
+    uart_printf(CONSOLE, "After task yield... TestTask - tid: %d, parent_tid: %d\r\n", MyTid(), task_parent_tid());
 
 #ifdef DEBUG
     print_priority_queues();
@@ -73,7 +73,7 @@ void test_task(void)
 void user_task(void)
 {
     for (int i = 0; i < 5; i++) {
-            uart_printf(CONSOLE, "%d: User Task (tid): %d\r\n", i, task_tid());
+            uart_printf(CONSOLE, "%d: User Task (tid): %d\r\n", i, MyTid());
     }
 
     print_priority_queues();
@@ -106,7 +106,7 @@ void display_ascii_art(void)
 void task1(void)
 {
     while (1) {
-        uart_printf(CONSOLE, "current: %d\r\n", task_tid());
+        uart_printf(CONSOLE, "current: %d\r\n", MyTid());
 
         for (int i = 0; i < 5; i++) {
             uart_printf(CONSOLE, "Task 1: %d\r\n", i);
@@ -121,7 +121,7 @@ void task1(void)
 
 void task_example(void)
 {
-    uart_printf(CONSOLE, "current: %d\r\n", task_tid());
+    uart_printf(CONSOLE, "current: %d\r\n", MyTid());
 
     delay(50000000);
     schedule();

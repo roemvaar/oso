@@ -31,11 +31,14 @@ void run_in_el0(void) {
     // asm volatile("mrs %0, CurrentEL" : "=r"(el));
     // el >>= 2;
     uart_printf(CONSOLE, "Running in EL0\r\n");
+    int tid;
 
     // Print to UART
     while (1) {
         uart_putc(CONSOLE, 'A');
-        delay(50000000);    /* This is ~five seconds */
+        tid = MyTid();
+        uart_printf(CONSOLE, "tid = %d\r\n", tid);
+        delay(100000);
     }
 }
 
@@ -113,7 +116,7 @@ int kmain(void)
     /* Start the scheduler, this function never returns */
     // schedule();
 
-    for(;;) {
+    for (;;) {
         uart_printf(CONSOLE, "Current EL: %d\r\n", get_el());
         uart_printf(CONSOLE, "Changing to EL0...\r\n");
         uart_printf(CONSOLE, "************************************\r\n");
