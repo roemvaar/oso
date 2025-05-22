@@ -10,7 +10,7 @@
 
 #define DEBUG
 
-/* Task Create (task_create)
+/* Task Create (Create())
  *
  * Allocates and initializes a task descriptor, using the given priority, and
  * the given function pointer as a pointer to the entry point of executable
@@ -24,7 +24,7 @@
  *      -1  - invalid priority
  *      -2  - kernel is out of task descriptors
  */
-int task_create(int priority, void (*task_code)(void))
+int Create(int priority, void (*task_code)(void))
 {
     /* Check that the priority is valid */
     if (priority < HIGHEST_PRIORITY || priority > LOWEST_PRIORITY) {
@@ -89,7 +89,7 @@ int MyTid(void)
     return x0;
 }
 
-/* Parent's Task ID (task_parent_tid)
+/* Parent's Task ID (MyParentTid())
  *
  * Returns the task id of the task that created the calling task. This will be
  * problematic only if the parent task has exited or been destroyed, in which
@@ -100,28 +100,35 @@ int MyTid(void)
  *       0  - if the current task is init_task
  *      -1  - if parent has been destroyed
  */
-int task_parent_tid(void)
+int MyParentTid(void)
 {
-    return sys_parent_tid();
+    register int x8 asm("x8") = SYSCALL_MY_PARENT_TID;
+    register int x0 asm("x0");
+    asm volatile("svc #0"
+                : "=r"(x0)
+                : "r"(x8)
+                : "memory");
+
+    return x0;
 }
 
-/* Task Yield (task_yield)
+/* Task Yield (Yield())
  *
  * Causes a task to pause executing. The task is moved to the end of its priority
  * queue, and will resume executing when next scheduled. 
  */
-void task_yield(void)
+void Yield(void)
 {
-    sys_stop_task();
+    sys_yield();
 }
 
-/* Task Exit (task_exit)
+/* Task Exit (Exit())
  *
  * Causes a task to cease execution permanently. It is removed from all priority
  * queues, send queues, receive queues and event queues. Resources owned by the
  * task, primarily its memory and task descriptor, may be reclaimed.
  */
-void task_exit(void)
+void Exit(void)
 {
-    sys_delete_task();
+    sys_exit();
 }

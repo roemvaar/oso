@@ -25,26 +25,26 @@ void first_user_task(void)
     /* Two lower priority tasks */
     int status;
 
-    status = task_create(4, &test_task);
+    status = Create(4, &test_task);
     if (status < 0) {
         uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
         return;
     }
 
-    status = task_create(3, &user_task);
+    status = Create(3, &user_task);
     if (status < 0) {
         uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
         return;
     }
 
     /* Two higher priority tasks */
-    status = task_create(1, &test_task);
+    status = Create(1, &test_task);
     if (status < 0) {
         uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
         return;
     }
 
-    status = task_create(1, &user_task);
+    status = Create(1, &user_task);
     if (status < 0) {
         uart_printf(CONSOLE, "FirstUserTask: Error creating task: %d\r\n", status);
         return;
@@ -52,22 +52,22 @@ void first_user_task(void)
 
     print_priority_queues();
     uart_printf(CONSOLE, "FirstUserTask: exiting...\r\n");
-    task_exit();
+    Exit();
 }
 
 void test_task(void)
 {
-    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", MyTid(), task_parent_tid());
+    uart_printf(CONSOLE, "TestTask - tid: %d, parent_tid: %d\r\n", MyTid(), MyParentTid());
 
-    task_yield();
+    Yield();
 
-    uart_printf(CONSOLE, "After task yield... TestTask - tid: %d, parent_tid: %d\r\n", MyTid(), task_parent_tid());
+    uart_printf(CONSOLE, "After task yield... TestTask - tid: %d, parent_tid: %d\r\n", MyTid(), MyParentTid());
 
 #ifdef DEBUG
     print_priority_queues();
 #endif
 
-    task_exit();
+    Exit();
 }
 
 void user_task(void)
@@ -77,7 +77,7 @@ void user_task(void)
     }
 
     print_priority_queues();
-    task_exit();
+    Exit();
 }
 
 void hello_name(char *array)

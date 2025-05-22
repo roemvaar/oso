@@ -3,10 +3,10 @@
 
 #include "sched.h"
 
-int task_create(int priority, void (*task_code)(void));
+int Create(int priority, void (*task_code)(void));
 int MyTid(void);
-int task_parent_tid(void);
-void task_yield(void);
-void task_exit(void);
+int MyParentTid(void);
+void Yield(void);
+void Exit(void);
 
 #endif  /* TASK_H_ */

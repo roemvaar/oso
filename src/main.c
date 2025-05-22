@@ -35,7 +35,6 @@ void run_in_el0(void) {
 
     // Print to UART
     while (1) {
-        uart_putc(CONSOLE, 'A');
         tid = MyTid();
         uart_printf(CONSOLE, "tid = %d\r\n", tid);
         delay(100000);
@@ -103,25 +102,25 @@ int kmain(void)
     start_kernel();
 
     /* Create the first user task that will bootstrap the user application
-       into existence by creating other user tasks. This task is the equivalent
-       to init_script in Linux.
+     * into existence by creating other user tasks. This task is the equivalent
+     * to init_script in Linux.
      */
     int status;
 
-    status = task_create(2, &first_user_task);
+    status = Create(2, &first_user_task);
     if (status < 0) {
         uart_printf(CONSOLE, "Error creating task: %d\r\n", status);
     }
 
     /* Start the scheduler, this function never returns */
-    // schedule();
-
+    schedule();
+    
     for (;;) {
         uart_printf(CONSOLE, "Current EL: %d\r\n", get_el());
         uart_printf(CONSOLE, "Changing to EL0...\r\n");
         uart_printf(CONSOLE, "************************************\r\n");
-        change_to_el0();
         delay(50000000);
+        change_to_el0();
     }
 
     /* Should never reach here! */
