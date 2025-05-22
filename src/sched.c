@@ -211,11 +211,10 @@ void task_dequeue(void)
 
 int sys_my_tid(void)
 {
-    // return current->tid;
-    return 7175;
+    return current->tid;
 }
 
-int sys_parent_tid(void)
+int sys_my_parent_tid(void)
 {
     int parent_tid;
     struct task_struct *current_task;
@@ -238,6 +237,25 @@ int sys_parent_tid(void)
     return parent_tid;
 }
 
+/* Causes a task to pause executing. The task is moved to the end of its priority queue,
+ * and will resume executing when next scheduled;
+ */ 
+void sys_yield(void)
+{
+    current->state = READY;
+    /* Move current to the end of its ready priority queue */
+    task_dequeue();
+    task_enqueue(current);
+    schedule();
+}
+
+void sys_exit(void)
+{
+    current->state = EXITED;
+    task_dequeue();
+    schedule();
+}
+
 int get_num_tasks(void)
 {
     return num_tasks;
@@ -251,25 +269,6 @@ int get_new_tid(void)
 struct task_struct *get_current_task(void)
 {
     return current;
-}
-
-/* Causes a task to pause executing. The task is moved to the end of its priority queue,
- * and will resume executing when next scheduled;
-*/ 
-void sys_stop_task(void)
-{
-    current->state = READY;
-    /* Move current to the end of its ready priority queue */
-    task_dequeue();
-    task_enqueue(current);
-    schedule();
-}
-
-void sys_delete_task(void)
-{
-    current->state = EXITED;
-    task_dequeue();
-    schedule();
 }
 
 /* For debugging */
