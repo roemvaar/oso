@@ -70,7 +70,8 @@
     mov x0, #\type
     mrs x1, esr_el1
     mrs x2, elr_el1
-    // bl show_invalid_entry_message
+    mrs x3, far_el1
+    bl show_invalid_entry_message
     b err_hang
 .endm
 
@@ -88,18 +89,18 @@
 .balign 0x800
 .global vector_table_el1
 vector_table_el1:
-    ventry sync_invalid_el1t        // * SWI Handler Synchronous exception from the current EL using SP0
-    ventry irq_invalid_el1t         // * IRQ Handler IRQ exception from the current EL using SP0
+    ventry sync_invalid_el1t        // SWI Handler Synchronous exception from the current EL using SP0
+    ventry irq_invalid_el1t         // IRQ Handler IRQ exception from the current EL using SP0
     ventry fiq_invalid_el1t         // FIQ exception from the current EL using SP0
     ventry error_invalid_el1t       // System Error exception from the current EL using SP0
 
-    ventry sync_invalid_el1h        // * SWI Handler Synchronous exception from the current EL using the current SP
-    ventry handle_el1_irq           // * IRQ Handler IRQ exception from the current EL using the current SP
+    ventry sync_invalid_el1h        // SWI Handler Synchronous exception from the current EL using the current SP
+    ventry handle_el1_irq           // IRQ Handler IRQ exception from the current EL using the current SP
     ventry fiq_invalid_el1h         // FIQ exception from the current EL using the current SP
     ventry error_invalid_el1h       // System Error exception from the current EL using current SP
 
-    ventry sync_invalid_el0_64		// Synchronous exception from EL0 (AArch64)
-    ventry irq_invalid_el0_64		// IRQ exception from EL0(AArch64)
+    ventry sync_el0_64		        // Synchronous exception from EL0 (AArch64)
+    ventry handle_el0_irq		    // IRQ exception from EL0(AArch64)
     ventry fiq_invalid_el0_64       // FIQ exception from EL0 (AArch64)
     ventry error_invalid_el0_64     // System Error exception EL0 (AArch64)
     
@@ -165,6 +166,18 @@ handle_el1_irq:
     bl handle_irq
     kernel_exit
 
+.align 8
+handle_el0_irq:
+    bl handle_el1_irq
+    eret
+
+.align 8
+sync_el0_64:
+    kernel_entry    // push x0-x30 onto the new SP
+    mov x0, sp      // pass pointer to that saved-regs block
+    bl syscall_handler
+    kernel_exit     // pop x0-x30 and eret back to EL0
+
 /* Error hang */
 .align 8
 .global err_hang
@@ -173,7 +186,7 @@ err_hang:
 
 /* Exception vector table EL1 initialization. We have to tell
  * the core, where is the exception vector located, using
- * the `VBAR_EL0` special purpose register.
+ * the `VBAR_EL1` special purpose register.
  * From: "Bare-metal Boot Code for ARMv8-A Processors"
  */
 .align 8

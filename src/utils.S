@@ -18,6 +18,32 @@ get_el:
     lsr x0, x0, #2
     ret
 
+/* Change to EL0 */
+.globl change_to_el0
+change_to_el0:
+    // Set up EL0 stack
+    ldr x0, =el0_stack_end
+    msr sp_el0, x0
+
+    // Set up return address to EL0 entry point
+    adr x0, el0_entry
+    msr elr_el1, x0
+
+    // Set SPSR_EL1
+    // M[3:0] = 0000 -> EL0t
+    // D, A, I, F = 0 -> enable all exceptions
+    mov x0, #0          // All interrupt bits = 0
+    msr spsr_el1, x0    // Mode = 0000 (EL0t)
+
+    // ERET to EL0
+    eret    // -> el0_entry
+
+// EL0 entry code, call a C function
+.globl el0_entry
+el0_entry:
+    // You are now in EL0!
+    bl run_in_el0   // Call a C function running in EL0
+
 /* Get Stack Pointer Select (SPSel) */
 .globl get_SPSel
 get_SPSel:
@@ -58,3 +84,11 @@ cpu_switch_to:
 .globl ret_from_fork
 ret_from_fork:
     blr     x19
+
+.section ".bss"
+.balign 16
+el0_stack:
+    .rept 0x100000
+    .byte 0
+    .endr
+el0_stack_end:

@@ -26,6 +26,30 @@ void print_oso_logo(void)
     uart_printf(CONSOLE, "%s", bear_art);
 }
 
+void run_in_el0(void) {
+    // unsigned long el;
+    // asm volatile("mrs %0, CurrentEL" : "=r"(el));
+    // el >>= 2;
+    uart_printf(CONSOLE, "Running in EL0\r\n");
+    int tid;
+
+    // Print to UART
+    while (1) {
+        uart_putc(CONSOLE, 'A');
+        tid = MyTid();
+        uart_printf(CONSOLE, "tid = %d\r\n", tid);
+        delay(100000);
+    }
+}
+
+void show_invalid_entry_message(int type, unsigned long esr, unsigned long elr, unsigned long far) {
+    uart_printf(CONSOLE, "Exception Type: %d\r\n", type);
+    uart_printf(CONSOLE, "ESR_EL1: %x\r\n", esr);
+    uart_printf(CONSOLE, "ELR_EL1: %x\r\n", elr);
+    uart_printf(CONSOLE, "FAR_EL1: %x\r\n", far);
+    delay(50000000);
+}
+
 /* start_kernel
  *
  * The kernel needs to initialize important features, such as the
@@ -70,7 +94,7 @@ void start_kernel(void)
 
     uart_printf(CONSOLE, "*****************************************\r\n");
     uart_printf(CONSOLE, "OSo - RTOS by roemvaar\r\n");
-    uart_printf(CONSOLE, "version: 1.0 | Build: 2024-11-25\r\n");
+    uart_printf(CONSOLE, "version: 1.1 | Build: 2025-05-15\r\n");
     print_oso_logo();
 }
 
@@ -90,7 +114,15 @@ int kmain(void)
     }
 
     /* Start the scheduler, this function never returns */
-    schedule();
+    // schedule();
+
+    for (;;) {
+        uart_printf(CONSOLE, "Current EL: %d\r\n", get_el());
+        uart_printf(CONSOLE, "Changing to EL0...\r\n");
+        uart_printf(CONSOLE, "************************************\r\n");
+        change_to_el0();
+        delay(50000000);
+    }
 
     /* Should never reach here! */
     return status;

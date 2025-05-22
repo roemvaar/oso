@@ -6,6 +6,8 @@
 #include "sched.h"
 #include "sys.h"
 
+#include "syscall.h"
+
 #define DEBUG
 
 /* Task Create (task_create)
@@ -68,16 +70,23 @@ int task_create(int priority, void (*task_code)(void))
     return new_task->tid;
 }
 
-/* Task ID (task_tid)
+/* Task ID (MyTid())
  * 
  * Returns the task id of the calling task.
  * 
  * return:
  *      tid - the task id of the task that is currently running
  */
-int task_tid(void)
+int MyTid(void)
 {
-    return sys_tid();
+    register int x8 asm("x8") = SYSCALL_MY_TID;
+    register int x0 asm("x0");
+    asm volatile("svc #0"
+                : "=r"(x0)      // output
+                : "r"(x8)       // input
+                : "memory");    // clobbers
+
+    return x0;
 }
 
 /* Parent's Task ID (task_parent_tid)
